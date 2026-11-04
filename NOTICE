@@ -1,0 +1,24 @@
+Aidoku AI Sources
+Copyright 2026 Ranennder and contributors
+
+MangaLib and the libgroup template are adapted from Aidoku-Community/sources,
+revision 4ca350a031e6e708ad1308a6f4127a69fe517841.
+Copyright 2025 Aidoku community source contributors.
+The upstream code is available under Apache-2.0 OR MIT. Both upstream license
+texts are retained in this repository (LICENSE and LICENSE-MIT).
+
+MangaBuff is adapted from the MangaBuff extension in
+https://github.com/keiyoushi/extensions-source/tree/main/src/ru/mangabuff
+revision ee661f5233b346559fbdd53993d447c318c5aef0, under Apache-2.0.
+Original author: Vetle Ledaal. Additional path contributors include Exinaus,
+Dr1ks, darwin-256, AwkwardPeak7 and FourTOne5. Original authors and contributors
+retain their rights. The port and its modifications are under Apache-2.0.
+
+The compiled sources include the Aidoku Rust SDK,
+https://github.com/Aidoku/aidoku-rs,
+revision ae6485e3c14ecd1fd5497d170eae884c68d04a87.
+Copyright (c) 2022-2025 Skittyblock. Its MIT license is reproduced in
+LICENSE-AIDOKU-SDK and in the distributed source packages.
+
+Site names and icons identify their respective content providers. This source
+repository does not host manga pages and is not affiliated with those providers.

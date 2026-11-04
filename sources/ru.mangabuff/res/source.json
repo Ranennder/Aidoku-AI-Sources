@@ -1,0 +1,15 @@
+{
+  "info": {
+    "id": "ru.mangabuff",
+    "name": "MangaBuff",
+    "version": 1,
+    "url": "https://mangabuff.ru",
+    "contentRating": 1,
+    "minAppVersion": "0.7.1",
+    "languages": ["ru"]
+  },
+  "listings": [
+    { "id": "popular", "name": "Популярное" },
+    { "id": "latest", "name": "Последние обновления" }
+  ]
+}

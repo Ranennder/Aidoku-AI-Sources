@@ -1,0 +1,41 @@
+name: Publish source repository
+
+on:
+  workflow_run:
+    workflows: [Build and test sources]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: publish-source-repository
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Download the successful build artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name aidoku-ai-sources --dir "$RUNNER_TEMP/source-dist"
+      - name: Verify and publish the tested feed and packages
+        env:
+          SOURCE_COMMIT: ${{ github.event.workflow_run.head_sha }}
+          BUILD_URL: ${{ github.event.workflow_run.html_url }}
+        run: python tools/publish.py "$RUNNER_TEMP/source-dist" --source-commit "$SOURCE_COMMIT" --run-url "$BUILD_URL"

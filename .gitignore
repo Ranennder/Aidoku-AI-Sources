@@ -1,0 +1,8 @@
+**/target/
+**/package.aix
+**/__pycache__/
+*.pyc
+/build/
+/dist/
+.DS_Store
+

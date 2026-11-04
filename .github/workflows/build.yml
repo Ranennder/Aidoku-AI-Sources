@@ -1,0 +1,91 @@
+name: Build and test sources
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      live_smoke:
+        description: Run optional network smoke checks against the current websites
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sources-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_BUILD_JOBS: '2'
+  RAYON_NUM_THREADS: '2'
+  AIDOKU_SDK_REV: ae6485e3c14ecd1fd5497d170eae884c68d04a87
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.99.0'
+          targets: wasm32-unknown-unknown
+          components: clippy,rustfmt
+      - name: Install native runner dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev libfreetype6-dev libfontconfig1-dev
+      - name: Cache pinned Rust tools and dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ${{ runner.temp }}/aidoku-tools
+            sources/*/target
+            templates/*/target
+          key: sources-${{ runner.os }}-1.99.0-ae6485e3-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: sources-${{ runner.os }}-1.99.0-ae6485e3-
+      - name: Install pinned source tools for the Linux host
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          tools_root="$RUNNER_TEMP/aidoku-tools"
+          if [[ ! -x "$tools_root/bin/aidoku" || ! -x "$tools_root/bin/aidoku-test-runner" ]]; then
+            cargo install --locked --git https://github.com/Aidoku/aidoku-rs \
+              --rev "$AIDOKU_SDK_REV" --target x86_64-unknown-linux-gnu \
+              --root "$tools_root" aidoku-cli aidoku-test-runner
+          fi
+          echo "$tools_root/bin" >> "$GITHUB_PATH"
+      - name: Validate pinned manifests and packaging regression tests
+        run: |
+          python tools/build.py validate
+          python -m unittest discover -s tools -p 'test_*.py' -v
+      - name: Rust formatting and Clippy
+        run: python tools/build.py lint
+      - name: Offline WASM fixture tests
+        run: python tools/build.py test
+      - name: Build and package the exact source binaries
+        run: python tools/build.py package
+      - name: Verify published source schemas
+        run: aidoku verify dist/sources/*.aix
+      - name: Optional live website smoke
+        if: github.event_name == 'workflow_dispatch' && inputs.live_smoke
+        run: python tools/live_smoke.py --source mangabuff --output build/live-smoke.json
+      - name: Upload complete source repository
+        uses: actions/upload-artifact@v4
+        with:
+          name: aidoku-ai-sources
+          path: dist/
+          if-no-files-found: error
+      - name: Upload build and test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-build-diagnostics
+          path: build/
+          if-no-files-found: ignore
