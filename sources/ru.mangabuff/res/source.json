@@ -5,7 +5,7 @@
     "version": 1,
     "url": "https://mangabuff.ru",
     "contentRating": 1,
-    "minAppVersion": "0.7.1",
+    "minAppVersion": "0.8.3",
     "languages": ["ru"]
   },
   "listings": [
