@@ -1,5 +1,5 @@
 use super::*;
-use aidoku::{PageContent, alloc::vec, imports::html::Html};
+use aidoku::{HashMap, PageContent, alloc::vec, imports::html::Html};
 use aidoku_test::aidoku_test;
 
 fn fixture(value: &str) -> Document {
@@ -175,7 +175,9 @@ fn native_guest_cookie_storage_does_not_run_a_login_success_callback_and_logout_
 	defaults_set("login.keys", DefaultValue::StringArray(Vec::new()));
 	defaults_set("login.values", DefaultValue::StringArray(Vec::new()));
 	source.handle_notification("login.changed".into());
-	assert!(defaults_get::<String>("loginOrigin").is_none());
-	defaults_set("login.keys", DefaultValue::Null);
-	defaults_set("login.values", DefaultValue::Null);
+	assert_eq!(defaults_get::<String>("loginOrigin").as_deref(), Some(""));
+	assert_ne!(
+		defaults_get::<String>("loginOrigin").as_deref(),
+		Some(DEFAULT_URL)
+	);
 }

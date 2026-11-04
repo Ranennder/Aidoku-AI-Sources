@@ -248,7 +248,5 @@ mod tests {
 		defaults_set(&keys, DefaultValue::StringArray(Vec::new()));
 		defaults_set(&values, DefaultValue::StringArray(Vec::new()));
 		assert!(source.cookies().is_empty());
-		defaults_set(&keys, DefaultValue::Null);
-		defaults_set(&values, DefaultValue::Null);
 	}
 }

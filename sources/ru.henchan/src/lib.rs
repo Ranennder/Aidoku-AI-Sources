@@ -182,7 +182,7 @@ impl NotificationHandler for HenChan {
 		let origin = defaults_get_map("login")
 			.filter(|cookies| !cookies.is_empty())
 			.map(|_| DefaultValue::String(base_url()))
-			.unwrap_or(DefaultValue::Null);
+			.unwrap_or_else(|| DefaultValue::String(String::new()));
 		defaults_set("loginOrigin", origin);
 	}
 }
