@@ -1,7 +1,87 @@
 {
-  "sourceCommit": "e457b835fe4c88872e5069101c642fe0b071b168",
+  "sourceCommit": "956b94abd324fc8cc5faf1596ae32584517776be",
   "sdkRevision": "ae6485e3c14ecd1fd5497d170eae884c68d04a87",
   "packages": [
+    {
+      "id": "en.asurascans",
+      "version": 20,
+      "size": 109966,
+      "sha256": "d8a3714d0297327cab1b20b718ca27ce99d5df2bb34987816d39b5948a57da18",
+      "wasm_sha256": "c30f699190f764649d1da100d400dd7066288ac59c14ee482cd4ff1d352eaf32",
+      "crate": "asurascans",
+      "packageURL": "sources/en.asurascans-v20.aix",
+      "iconURL": "icons/en.asurascans-v20.png"
+    },
+    {
+      "id": "multi.hentaizap",
+      "version": 1,
+      "size": 72539,
+      "sha256": "630e8f4d67e2b9915bcc0b7288698d056e25ea3234d50fc3556ecdd4be70b7c6",
+      "wasm_sha256": "79dd82681a1e2ce335b99d6ab0a80ffe14ee60b7860f17722ca72b515054e621",
+      "crate": "hentaizap",
+      "packageURL": "sources/multi.hentaizap-v1.aix",
+      "iconURL": "icons/multi.hentaizap-v1.png"
+    },
+    {
+      "id": "multi.kagane",
+      "version": 6,
+      "size": 137402,
+      "sha256": "fd476d4fb8444bf8e6004d8f39958310063b9767769222bbf9f06dfd38f14ea8",
+      "wasm_sha256": "7b67998e6bb0f0a250fe78c88e1916ec3c5bdf33ed22d5d0ca00a3f7b66e02dd",
+      "crate": "kagane",
+      "packageURL": "sources/multi.kagane-v6.aix",
+      "iconURL": "icons/multi.kagane-v6.png"
+    },
+    {
+      "id": "multi.mangadotnet",
+      "version": 9,
+      "size": 164037,
+      "sha256": "fb33e52656c0cb747b104dad9322ed9a8f78d671b7ae314e0c80711ff5c4ebf5",
+      "wasm_sha256": "3ae9a76bf95f08a4dbbbf91492a4e71d71a149a7e73cb73d81d0e2b2d13f9f12",
+      "crate": "mangadotnet",
+      "packageURL": "sources/multi.mangadotnet-v9.aix",
+      "iconURL": "icons/multi.mangadotnet-v9.png"
+    },
+    {
+      "id": "multi.simplyhentai",
+      "version": 1,
+      "size": 77444,
+      "sha256": "17d6e6fbd13dca162afb45a6ab9fbeaaabaa029debea4d004926518ef7afe64b",
+      "wasm_sha256": "95a2a621f90fd5647f310d28ff77ec9df862f004e27de5b0f543e86b02666432",
+      "crate": "simplyhentai",
+      "packageURL": "sources/multi.simplyhentai-v1.aix",
+      "iconURL": "icons/multi.simplyhentai-v1.png"
+    },
+    {
+      "id": "ru.allhentai",
+      "version": 1,
+      "size": 94388,
+      "sha256": "90425e68f995ceba2bb4f8598fe2051b257b533882df690f344dac8bca33e234",
+      "wasm_sha256": "a2f7d27670efca174cbfa98ab00e2f1ad6c6201cc722861bc622ea31ccbeecec",
+      "crate": "allhentai",
+      "packageURL": "sources/ru.allhentai-v1.aix",
+      "iconURL": "icons/ru.allhentai-v1.png"
+    },
+    {
+      "id": "ru.desu",
+      "version": 9,
+      "size": 149358,
+      "sha256": "6bdc70be8a2d4f7d4ed175caa9b9360261a5f5b874c1cf2805f39c90ce838bbc",
+      "wasm_sha256": "0c8d9a390459ab8ea71c1e0e4c43a0cdea697b1c25072ff63762945661a0d893",
+      "crate": "desu",
+      "packageURL": "sources/ru.desu-v9.aix",
+      "iconURL": "icons/ru.desu-v9.png"
+    },
+    {
+      "id": "ru.henchan",
+      "version": 1,
+      "size": 94852,
+      "sha256": "94ebe54314292485a273eebdff9cd22715af981cca5a9623bc31f195df56efab",
+      "wasm_sha256": "2a8a8bc4f7f09825842e333864cd9db517ce5eca0ccdc65b77ecd4d0387d1793",
+      "crate": "henchan",
+      "packageURL": "sources/ru.henchan-v1.aix",
+      "iconURL": "icons/ru.henchan-v1.png"
+    },
     {
       "id": "ru.mangabuff",
       "version": 2,
@@ -13,6 +93,16 @@
       "iconURL": "icons/ru.mangabuff-v2.png"
     },
     {
+      "id": "ru.mangahub",
+      "version": 1,
+      "size": 89287,
+      "sha256": "440d3bd780d8132c66454e72995713f601d297f2b330de81e4341a52eef07d69",
+      "wasm_sha256": "974bff248be7d5c32ca1b6c3e3d66ed064829f3bea9a1b6efa73e92040e22017",
+      "crate": "mangahub",
+      "packageURL": "sources/ru.mangahub-v1.aix",
+      "iconURL": "icons/ru.mangahub-v1.png"
+    },
+    {
       "id": "ru.mangalib",
       "version": 11,
       "size": 159960,
@@ -21,6 +111,76 @@
       "crate": "mangalib",
       "packageURL": "sources/ru.mangalib-v11.aix",
       "iconURL": "icons/ru.mangalib-v11.png"
+    },
+    {
+      "id": "ru.mangashi",
+      "version": 1,
+      "size": 79308,
+      "sha256": "30cd0c2fd894f3fa2607ca48d3074f2f19b027520b38cd6fa88ac665097ce074",
+      "wasm_sha256": "75629e8389907b1c2d19761590ccc8eba768d58bd638de89072c787469235936",
+      "crate": "mangashi",
+      "packageURL": "sources/ru.mangashi-v1.aix",
+      "iconURL": "icons/ru.mangashi-v1.png"
+    },
+    {
+      "id": "ru.nudemoon",
+      "version": 1,
+      "size": 84365,
+      "sha256": "a3dea3873976cecec9495baaa47ef8af640bd1c0865e45d2af9466ec1fff869b",
+      "wasm_sha256": "28828f4a994d58fbac8f94b68f87bb7ce1ab7d7f70056614ee9cc303e7ed434b",
+      "crate": "nudemoon",
+      "packageURL": "sources/ru.nudemoon-v1.aix",
+      "iconURL": "icons/ru.nudemoon-v1.png"
+    },
+    {
+      "id": "ru.readmanga",
+      "version": 1,
+      "size": 103533,
+      "sha256": "26473208181aa4e5db8fa3c792ef56776e907c69b67b1af0a4469dae3640b153",
+      "wasm_sha256": "a47dbd19b9c40a6582e76820b6a9599bc4acf56b91eb968528c4f1fafc209458",
+      "crate": "readmanga",
+      "packageURL": "sources/ru.readmanga-v1.aix",
+      "iconURL": "icons/ru.readmanga-v1.png"
+    },
+    {
+      "id": "ru.senkognito",
+      "version": 1,
+      "size": 110299,
+      "sha256": "9ab014920bbc04f93e6d652f3a692540e2c94b3b3484aa9115e532876fe07c3a",
+      "wasm_sha256": "a3a1b0de73f2255cd2c47e0ed0768df74bfc5a58eccdca837ad96414232a61c3",
+      "crate": "senkognito",
+      "packageURL": "sources/ru.senkognito-v1.aix",
+      "iconURL": "icons/ru.senkognito-v1.png"
+    },
+    {
+      "id": "ru.senkuro",
+      "version": 2,
+      "size": 108331,
+      "sha256": "93073fc81718b6ebe4799ea73538d4c54cf3fc404a50e05a88bcdd2eb69323a5",
+      "wasm_sha256": "98ea5028f976f804ed187acdb0f9ba8f66b9f8d96025b9913a4feefa715da42b",
+      "crate": "senkuro",
+      "packageURL": "sources/ru.senkuro-v2.aix",
+      "iconURL": "icons/ru.senkuro-v2.png"
+    },
+    {
+      "id": "ru.slashlib",
+      "version": 5,
+      "size": 159550,
+      "sha256": "178752962e66d340de9dc37f79ff2c45860c93313b9e637093b612cb471d09d9",
+      "wasm_sha256": "560b282cf3cc261002c4f2dfca1a9038ec57ea0a981438c7b8710f560b4d58e8",
+      "crate": "slashlib",
+      "packageURL": "sources/ru.slashlib-v5.aix",
+      "iconURL": "icons/ru.slashlib-v5.png"
+    },
+    {
+      "id": "ru.wamanga",
+      "version": 1,
+      "size": 100758,
+      "sha256": "fff09264e390baef4641f378b6e1b8f41ede4ea21f1f7b7280439fd24db64951",
+      "wasm_sha256": "4e476f4001b82396f04a05d8ce26f50aade6d413f5b31c78be790d28cf9bcf54",
+      "crate": "wamanga",
+      "packageURL": "sources/ru.wamanga-v1.aix",
+      "iconURL": "icons/ru.wamanga-v1.png"
     }
   ]
 }
