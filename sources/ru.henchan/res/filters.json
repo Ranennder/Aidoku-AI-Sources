@@ -17,7 +17,7 @@
 	{
 		"id": "tags",
 		"title": "Тэги",
-		"type": "multiselect",
+		"type": "multi-select",
 		"isGenre": true,
 		"canExclude": true,
 		"options": [
