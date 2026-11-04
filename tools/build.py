@@ -125,9 +125,21 @@ def validate(root: Path) -> None:
 
 
 def lint(root: Path) -> None:
+    failures = {}
     for directory in crate_directories(root):
-        run(["cargo", "fmt", "--check"], directory)
-        run(["cargo", "clippy", "--locked", "--target", TARGET, "--", "-D", "warnings"], directory)
+        for command in (["cargo", "fmt", "--check"],
+                        ["cargo", "clippy", "--locked", "--target", TARGET, "--", "-D", "warnings"]):
+            try:
+                run(command, directory)
+            except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+                name = directory.relative_to(root).as_posix() + ":" + command[1]
+                failures[name] = str(error)
+                print(f"FAILED {name}: {error}", flush=True)
+    report = root / "build/lint.json"
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_text(json.dumps({"passed": not failures, "errors": failures}, indent=2) + "\n", encoding="utf-8")
+    if failures:
+        raise ValueError("Lint failed: " + "; ".join(failures))
 
 
 def test(root: Path, *, live: bool = False) -> None:

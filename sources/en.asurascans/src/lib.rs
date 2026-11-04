@@ -248,10 +248,9 @@ impl Source for AsuraScans {
 		}
 		if let Ok(json) = api_req.json_owned::<serde_json::Value>()
 			&& let Some(page_arr) = json["data"]["chapter"]["pages"].as_array()
+			&& let Ok(pages) = helpers::reader_pages(page_arr, false)
 		{
-			if let Ok(pages) = helpers::reader_pages(page_arr, false) {
-				return Ok(pages);
-			}
+			return Ok(pages);
 		}
 
 		let url = helpers::get_chapter_url(&chapter.key, &manga.key);

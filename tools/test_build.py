@@ -117,6 +117,26 @@ class PackagingTests(unittest.TestCase):
 
 
 class TestDriverTests(unittest.TestCase):
+    def test_lint_failure_reports_all_crates_and_checks(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            crates = [root / "sources/ru.first", root / "templates/shared"]
+            calls = []
+
+            def run(command, directory):
+                calls.append((directory, command[1]))
+                if directory == crates[0]:
+                    raise subprocess.CalledProcessError(101, command)
+                return ""
+
+            with patch("build.crate_directories", return_value=crates), patch("build.run", side_effect=run):
+                with self.assertRaisesRegex(ValueError, "sources/ru.first:clippy"):
+                    build.lint(root)
+            self.assertEqual(calls, [(crate, check) for crate in crates for check in ("fmt", "clippy")])
+            report = build.read_json(root / "build/lint.json")
+            self.assertFalse(report["passed"])
+            self.assertEqual(set(report["errors"]), {"sources/ru.first:fmt", "sources/ru.first:clippy"})
+
     def test_compile_or_runtime_failure_does_not_skip_the_remaining_crate_suites(self):
         for failure_at in ("compile", "runtime"):
             with self.subTest(failure_at=failure_at), tempfile.TemporaryDirectory() as temporary:

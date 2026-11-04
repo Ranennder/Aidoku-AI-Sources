@@ -75,12 +75,14 @@ jobs:
           path: ${{ runner.temp }}/aidoku-tools
           key: ${{ steps.tools-cache.outputs.cache-primary-key }}
       - name: Validate pinned manifests and packaging regression tests
+        id: validate
         run: |
           python tools/build.py validate
           python -m unittest discover -s tools -p 'test_*.py' -v
       - name: Rust formatting and Clippy
         run: python tools/build.py lint
       - name: Offline WASM fixture tests
+        if: ${{ !cancelled() && steps.validate.outcome == 'success' }}
         run: python tools/build.py test
       - name: Build and package the exact source binaries
         run: python tools/build.py package
