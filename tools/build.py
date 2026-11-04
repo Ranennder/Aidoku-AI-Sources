@@ -132,6 +132,7 @@ def lint(root: Path) -> None:
 
 def test(root: Path, *, live: bool = False) -> None:
     counts = {}
+    failures = {}
     for directory in crate_directories(root):
         # Fetch/compile with normal Cargo networking before switching the runner
         # to fixture-only networking. The same test binaries are then reused.
@@ -141,16 +142,25 @@ def test(root: Path, *, live: bool = False) -> None:
             if "live-tests" not in manifest.get("features", {}):
                 continue
             command.extend(["--features", "live-tests"])
-        run(command + ["--no-run"], directory)
-        output = run(command + ["--offline", "--", "--nocapture"], directory, offline_runtime=not live)
-        summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed;", output)
-        if not summaries or any(int(failed) for _, failed in summaries):
-            raise ValueError(f"No successful test-runner summary for {directory}")
-        counts[directory.relative_to(root).as_posix()] = sum(int(passed) for passed, _ in summaries)
-    if not counts or sum(counts.values()) == 0:
-        raise ValueError("No tests executed")
+        relative = directory.relative_to(root).as_posix()
+        try:
+            run(command + ["--no-run"], directory)
+            output = run(command + ["--offline", "--", "--nocapture"], directory, offline_runtime=not live)
+            summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed;", output)
+            if not summaries or any(int(failed) for _, failed in summaries):
+                raise ValueError("No successful test-runner summary")
+            counts[relative] = sum(int(passed) for passed, _ in summaries)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError) as error:
+            failures[relative] = str(error)
+            print(f"FAILED {relative}: {error}", flush=True)
+    if not failures and (not counts or sum(counts.values()) == 0):
+        failures["test-runner"] = "No tests executed"
     report = root / ("build/live-tests.json" if live else "build/offline-tests.json")
-    report.write_text(json.dumps({"passed": True, "live": live, "tests": counts}, indent=2) + "\n", encoding="utf-8")
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_text(json.dumps({"passed": not failures, "live": live, "tests": counts, "errors": failures}, indent=2) + "\n",
+                      encoding="utf-8")
+    if failures:
+        raise ValueError("Test suites failed: " + "; ".join(f"{name}: {error}" for name, error in failures.items()))
 
 
 def package_source(directory: Path, destination: Path, root: Path) -> dict:

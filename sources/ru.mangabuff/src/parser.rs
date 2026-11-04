@@ -3,7 +3,7 @@ use aidoku::{
 	alloc::{String, Vec, string::ToString},
 	helpers::uri::QueryParameters,
 	imports::{
-		html::{Document, Element},
+		html::{Document, Element, Html},
 		std::parse_date,
 	},
 	prelude::*,
@@ -162,6 +162,29 @@ fn status(value: &str) -> MangaStatus {
 	}
 }
 
+fn readable_description(element: &Element) -> Option<String> {
+	// Mark serialized block boundaries before parsing a full document. This
+	// needs neither DOM mutations nor the test host's incomplete node casts.
+	const BREAK: &str = "\u{E000}";
+	let mut html = element.html()?;
+	for tag in ["</p>", "</div>", "</li>", "</section>", "</blockquote>"] {
+		html = html.replace(tag, &format!("{tag}{BREAK}{BREAK}"));
+	}
+	for tag in ["<br>", "<br/>", "<br />"] {
+		html = html.replace(tag, BREAK);
+	}
+	let document = Html::parse(format!("<html><body>{html}</body></html>")).ok()?;
+	let text = document.select_first("body")?.text()?;
+	let mut lines: Vec<String> = Vec::new();
+	for line in text.split(BREAK) {
+		let line = line.split_whitespace().collect::<Vec<_>>().join(" ");
+		if !line.is_empty() || lines.last().is_some_and(|last| !last.is_empty()) {
+			lines.push(line);
+		}
+	}
+	Some(lines.join("\n").trim().to_string())
+}
+
 pub fn parse_details(document: &Document, mut manga: Manga) -> Result<Manga> {
 	manga.title = document
 		.select_first("h1, .manga__name, .manga-mobile__name")
@@ -171,7 +194,7 @@ pub fn parse_details(document: &Document, mut manga: Manga) -> Result<Manga> {
 	manga.url = Some(format!("{BASE_URL}{}", canonical_path(&manga.key, false)?));
 	manga.description = document
 		.select_first(".manga__description")
-		.and_then(|element| element.text());
+		.and_then(|element| readable_description(&element));
 	manga.cover = document
 		.select_first(".manga__img img, img.manga-mobile__image")
 		.and_then(|element| image_url(&element))
@@ -211,6 +234,12 @@ fn number(text: Option<String>) -> Option<f32> {
 		.filter(|value| value.is_finite())
 }
 
+pub fn parse_upload_date(value: &str) -> Option<i64> {
+	// Supply an explicit UTC midnight so the same ICU format works with both
+	// the app's DateFormatter and the test host's full date-time parser.
+	parse_date(format!("{} 00:00:00", value.trim()), "dd.MM.yyyy HH:mm:ss")
+}
+
 pub fn parse_chapters(document: &Document) -> Result<Vec<Chapter>> {
 	let mut chapters = Vec::new();
 	for element in document
@@ -241,7 +270,7 @@ pub fn parse_chapters(document: &Document) -> Result<Vec<Chapter>> {
 			.select_first(".chapters__add-date")
 			.and_then(|value| value.text())
 			.or_else(|| element.attr("data-chapter-date"))
-			.and_then(|value| parse_date(value, "dd.MM.yyyy"));
+			.and_then(|value| parse_upload_date(&value));
 		chapters.push(Chapter {
 			url: Some(format!("{BASE_URL}{key}")),
 			key,

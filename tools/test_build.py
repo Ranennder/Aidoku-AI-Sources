@@ -2,6 +2,7 @@ import hashlib
 import json
 from pathlib import Path
 import struct
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -113,6 +114,47 @@ class PackagingTests(unittest.TestCase):
             changed_package.write_bytes(changed_package.read_bytes() + b"tampered")
             with self.assertRaisesRegex(ValueError, "checksum mismatch"):
                 publish.verify(output, commit)
+
+
+class TestDriverTests(unittest.TestCase):
+    def test_compile_or_runtime_failure_does_not_skip_the_remaining_crate_suites(self):
+        for failure_at in ("compile", "runtime"):
+            with self.subTest(failure_at=failure_at), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                crates = [root / "sources/ru.first", root / "sources/ru.second", root / "templates/shared"]
+                calls = []
+
+                def run(command, directory, **options):
+                    calls.append((directory, command, options))
+                    compiling = "--no-run" in command
+                    if directory == crates[0] and compiling == (failure_at == "compile"):
+                        raise subprocess.CalledProcessError(101, command)
+                    return "" if compiling else "test result: ok. 3 passed; 0 failed;\n"
+
+                with patch("build.crate_directories", return_value=crates), patch("build.run", side_effect=run):
+                    with self.assertRaisesRegex(ValueError, "sources/ru.first"):
+                        build.test(root)
+                report = build.read_json(root / "build/offline-tests.json")
+                self.assertFalse(report["passed"])
+                self.assertEqual(set(report["errors"]), {"sources/ru.first"})
+                self.assertEqual(report["tests"], {"sources/ru.second": 3, "templates/shared": 3})
+                completed_runtime = [directory for directory, command, _ in calls if "--offline" in command]
+                self.assertEqual(completed_runtime[-2:], crates[-2:])
+                for _, command, options in calls:
+                    if "--offline" in command:
+                        self.assertTrue(options["offline_runtime"])
+
+    def test_missing_or_zero_test_summaries_fail_with_a_saved_report(self):
+        for output in ("runner exited without test results", "test result: ok. 0 passed; 0 failed;\n"):
+            with self.subTest(output=output), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                directory = root / "sources/ru.fixture"
+                with patch("build.crate_directories", return_value=[directory]), patch("build.run", return_value=output):
+                    with self.assertRaises(ValueError):
+                        build.test(root)
+                report = build.read_json(root / "build/offline-tests.json")
+                self.assertFalse(report["passed"])
+                self.assertTrue(report["errors"])
 
 
 if __name__ == "__main__":

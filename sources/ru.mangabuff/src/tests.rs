@@ -93,7 +93,7 @@ fn details_preserve_site_cover_status_and_deduplicated_tags() {
 	assert_eq!(manga.title, "Пример произведения");
 	assert_eq!(
 		manga.description.as_deref(),
-		Some("Первая строка. Вторая строка.")
+		Some("Первая строка.\n\nВторая строка.")
 	);
 	assert_eq!(
 		manga.cover.as_deref(),
@@ -109,6 +109,14 @@ fn details_preserve_site_cover_status_and_deduplicated_tags() {
 		1
 	);
 	assert!(!tags.iter().any(|tag| tag == "Завершён"));
+	let mixed = parse_details(
+		&fixture("<h1>Пример</h1><div class='manga__description'><p>Один<br>Два &amp; <em>три</em></p><p>Четыре</p></div>"),
+		Manga { key: "/manga/fixture-one".into(), ..Default::default() },
+	).unwrap();
+	assert_eq!(
+		mixed.description.as_deref(),
+		Some("Один\nДва & три\n\nЧетыре")
+	);
 }
 
 #[aidoku_test]
@@ -141,7 +149,8 @@ fn chapter_urls_decimals_dates_and_order_survive_the_100_entry_boundary() {
 	assert_eq!(chapters[0].chapter_number, Some(125.0));
 	assert_eq!(chapters[0].volume_number, Some(1.0));
 	assert_eq!(chapters[1].chapter_number, Some(124.5));
-	assert!(chapters[0].date_uploaded.is_some());
+	assert_eq!(chapters[0].date_uploaded, Some(1_793_318_400));
+	assert_eq!(chapters[1].date_uploaded, Some(1_792_713_600));
 	assert_eq!(chapters[1].title.as_deref(), Some("Часть 2"));
 	let remaining = parse_chapters(&fixture("<a class='chapters__item' href='/manga/fixture-one/1/124.5'></a><a class='chapters__item' href='/manga/fixture-one/1/124'><span class='chapters__value'>Глава 124</span></a><a class='chapters__item' href='/manga/fixture-one/2/124'><span class='chapters__value'>Глава 124</span></a>")).unwrap();
 	parser::append_unique_chapters(&mut chapters, remaining);
@@ -152,6 +161,14 @@ fn chapter_urls_decimals_dates_and_order_survive_the_100_entry_boundary() {
 		chapters[0].url.as_deref(),
 		Some("https://mangabuff.ru/manga/fixture-one/1/125")
 	);
+}
+
+#[aidoku_test]
+fn upload_dates_are_utc_midnight_and_invalid_dates_stay_unknown() {
+	assert_eq!(parser::parse_upload_date(" 29.02.2000 "), Some(951_782_400));
+	assert_eq!(parser::parse_upload_date("01.01.1970"), Some(0));
+	assert_eq!(parser::parse_upload_date("not-a-date"), None);
+	assert_eq!(parser::parse_upload_date(""), None);
 }
 
 #[aidoku_test]
