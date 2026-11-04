@@ -1,0 +1,19 @@
+[
+	{
+		"id": "sort",
+		"title": "Сортировка",
+		"type": "sort",
+		"canAscend": false,
+		"options": [
+			"Дата",
+			"Просмотры",
+			"Лайки",
+			"Отзывы",
+			"Количество страниц"
+		],
+		"default": {
+			"index": 1,
+			"ascending": false
+		}
+	}
+]

@@ -6,7 +6,7 @@
         "type": "login",
         "key": "login",
         "method": "web",
-        "title": "Log in to AllHentai",
+        "title": "Войти в AllHentai",
         "url": "https://20.allhen.online",
         "clearCookiesOnLogOut": true
       }

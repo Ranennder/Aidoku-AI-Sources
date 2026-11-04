@@ -10,7 +10,7 @@ use crate::models::{
 	Cover, HomeManga, HomePopularData, HomeRecommendationsData, Localized, ReaderData, SearchManga,
 	StaffMember,
 };
-use crate::{BASE_URL, Senkognito, USER_AGENT};
+use crate::{BASE_URL, Senkognito};
 
 impl Senkognito {
 	pub(crate) fn reader_pages(data: ReaderData) -> Result<Vec<Page>> {
@@ -159,9 +159,7 @@ impl Senkognito {
 
 	pub(crate) fn fetch_description(&self, slug: &str) -> Option<String> {
 		let url = format!("{BASE_URL}/manga/{slug}");
-		let mut request = Request::get(url).ok()?;
-		request = request.header("User-Agent", USER_AGENT);
-		let response = request.send().ok()?;
+		let response = Request::get(url).ok()?.send().ok()?;
 		response
 			.get_html()
 			.ok()?

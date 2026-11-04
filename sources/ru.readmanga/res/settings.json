@@ -6,7 +6,7 @@
         "type": "login",
         "key": "login",
         "method": "web",
-        "title": "Log in to ReadManga",
+        "title": "Войти в ReadManga",
         "url": "https://a.zazaza.me",
         "clearCookiesOnLogOut": true
       }

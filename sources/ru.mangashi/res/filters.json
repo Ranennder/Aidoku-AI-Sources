@@ -1,0 +1,79 @@
+[
+  {
+    "type": "select",
+    "id": "sort",
+    "title": "Сортировка",
+    "options": [
+      "Популярное",
+      "Последние главы",
+      "Рейтинг",
+      "Новое",
+      "Количество глав",
+      "Год"
+    ],
+    "ids": [
+      "popular",
+      "updated",
+      "rating",
+      "added",
+      "chapters",
+      "year"
+    ],
+    "default": "popular"
+  },
+  {
+    "type": "select",
+    "id": "status",
+    "title": "Статус",
+    "options": [
+      "Все",
+      "Онгоинг",
+      "Завершён",
+      "Хиатус"
+    ],
+    "ids": [
+      "",
+      "ONGOING",
+      "COMPLETED",
+      "HIATUS"
+    ],
+    "default": ""
+  },
+  {
+    "type": "select",
+    "id": "type",
+    "title": "Тип",
+    "options": [
+      "Все",
+      "Манга",
+      "Манхва",
+      "Маньхуа",
+      "Комикс"
+    ],
+    "ids": [
+      "",
+      "MANGA",
+      "MANHWA",
+      "MANHUA",
+      "WESTERN"
+    ],
+    "default": ""
+  },
+  {
+    "type": "select",
+    "id": "age_rating",
+    "title": "Возраст",
+    "options": [
+      "Все",
+      "Без 18+",
+      "Только 18+"
+    ],
+    "ids": [
+      "",
+      "sfw",
+      "adult"
+    ],
+    "default": ""
+  }
+]
+

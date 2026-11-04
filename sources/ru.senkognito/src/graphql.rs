@@ -6,7 +6,7 @@ use aidoku::{
 };
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
-use crate::{API_URL, APP_ID, AUTH_KEY, BASE_URL, Senkognito, USER_AGENT};
+use crate::{API_URL, APP_ID, AUTH_KEY, BASE_URL, Senkognito};
 
 #[derive(Serialize)]
 pub(crate) struct GraphqlEnvelope<'a, V: Serialize> {
@@ -191,8 +191,7 @@ impl Senkognito {
 			.header("Content-Type", "application/json")
 			.header("Accept", "application/json")
 			.header("Origin", BASE_URL)
-			.header("Referer", BASE_URL)
-			.header("User-Agent", USER_AGENT);
+			.header("Referer", BASE_URL);
 		if !cookie.is_empty() {
 			request = request.header("Cookie", &cookie);
 		}
@@ -210,5 +209,46 @@ impl Senkognito {
 		envelope
 			.data
 			.ok_or_else(|| error!("Senkognito API: пустой ответ"))
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use aidoku::imports::defaults::{DefaultValue, defaults_set};
+	use aidoku_test::aidoku_test;
+
+	#[aidoku_test]
+	fn default_native_web_login_maps_and_logout_are_read_without_an_account_probe() {
+		let source = Senkognito;
+		let keys = format!("{AUTH_KEY}.keys");
+		let values = format!("{AUTH_KEY}.values");
+		defaults_set(
+			&keys,
+			DefaultValue::StringArray(aidoku::alloc::vec!["session".into(), "clearance".into()]),
+		);
+		defaults_set(
+			&values,
+			DefaultValue::StringArray(aidoku::alloc::vec![
+				"fixture-account".into(),
+				"fixture-guard".into()
+			]),
+		);
+		let header = source.cookies();
+		assert!(
+			header
+				.split("; ")
+				.any(|part| part == "session=fixture-account")
+		);
+		assert!(
+			header
+				.split("; ")
+				.any(|part| part == "clearance=fixture-guard")
+		);
+		defaults_set(&keys, DefaultValue::StringArray(Vec::new()));
+		defaults_set(&values, DefaultValue::StringArray(Vec::new()));
+		assert!(source.cookies().is_empty());
+		defaults_set(&keys, DefaultValue::Null);
+		defaults_set(&values, DefaultValue::Null);
 	}
 }

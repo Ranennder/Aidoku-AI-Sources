@@ -1,0 +1,37 @@
+[
+  {
+    "type": "select",
+    "id": "sort",
+    "title": "Сортировка",
+    "options": [
+      "Рейтинг",
+      "Последние главы"
+    ],
+    "ids": [
+      "rating",
+      "update"
+    ],
+    "default": "rating"
+  },
+  {
+    "type": "range",
+    "id": "year",
+    "title": "Год",
+    "decimal": false
+  },
+  {
+    "type": "range",
+    "id": "items",
+    "title": "Количество глав",
+    "decimal": false
+  },
+  {
+    "type": "range",
+    "id": "rating",
+    "title": "Рейтинг",
+    "min": 0,
+    "max": 10,
+    "decimal": true
+  }
+]
+

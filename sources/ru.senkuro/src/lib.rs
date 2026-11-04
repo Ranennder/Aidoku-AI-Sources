@@ -6,9 +6,9 @@ mod models;
 
 use aidoku::{
 	Chapter, DeepLinkHandler, DeepLinkResult, FilterValue, Home, HomeLayout, Listing,
-	ListingProvider, Manga, MangaPageResult, Page, Result, Source, WebLoginHandler,
+	ListingProvider, Manga, MangaPageResult, Page, Result, Source,
 	alloc::{String, Vec},
-	imports::{net::Request, std::send_partial_result},
+	imports::std::send_partial_result,
 	prelude::*,
 };
 
@@ -25,7 +25,6 @@ const BASE_URL: &str = "https://senkuro.me";
 const API_URL: &str = "https://api.senkuro.me/graphql";
 const AUTH_KEY: &str = "senkuro_login";
 const APP_ID: &str = "4026531840100";
-const USER_AGENT: &str = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
 
 struct Senkuro;
 
@@ -317,52 +316,6 @@ impl DeepLinkHandler for Senkuro {
 	}
 }
 
-impl WebLoginHandler for Senkuro {
-	fn handle_web_login(
-		&self,
-		key: String,
-		cookies: aidoku::HashMap<String, String>,
-	) -> Result<bool> {
-		if key != AUTH_KEY || cookies.is_empty() {
-			return Ok(false);
-		}
-
-		let mut cookie_header = String::new();
-		for (name, value) in cookies.iter() {
-			if !cookie_header.is_empty() {
-				cookie_header.push_str("; ");
-			}
-			cookie_header.push_str(name);
-			cookie_header.push('=');
-			cookie_header.push_str(value);
-		}
-
-		let response = Request::get(format!(
-			"{BASE_URL}/manga/i-took-it-instead-of-my-husband/chapters"
-		))?
-		.header("User-Agent", USER_AGENT)
-		.header(
-			"Accept",
-			"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-		)
-		.header("Referer", BASE_URL)
-		.header("Cookie", &cookie_header)
-		.send()?;
-
-		if response.status_code() >= 400 {
-			return Ok(false);
-		}
-
-		let body = response
-			.get_html()?
-			.select_first("body")
-			.and_then(|element| element.text())
-			.unwrap_or_default();
-
-		Ok(body.contains("18+") && !body.contains("Авторизуйтесь для чтения"))
-	}
-}
-
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -459,10 +412,4 @@ mod tests {
 	}
 }
 
-register_source!(
-	Senkuro,
-	WebLoginHandler,
-	ListingProvider,
-	Home,
-	DeepLinkHandler
-);
+register_source!(Senkuro, ListingProvider, Home, DeepLinkHandler);

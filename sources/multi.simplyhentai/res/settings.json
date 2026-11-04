@@ -1,0 +1,16 @@
+[
+  {
+    "type": "group",
+    "title": "Search",
+    "items": [
+      {
+        "type": "text",
+        "key": "blacklist",
+        "title": "Blacklist",
+        "placeholder": "Comma-separated tags",
+        "default": "",
+        "autocorrectionDisabled": true
+      }
+    ]
+  }
+]

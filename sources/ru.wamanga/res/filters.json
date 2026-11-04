@@ -1,0 +1,117 @@
+[
+  {
+    "type": "sort",
+    "id": "sort",
+    "title": "Сортировать по",
+    "canAscend": true,
+    "options": [
+      "Обновлению",
+      "Лайкам",
+      "Добавлению",
+      "Просмотрам",
+      "Алфавиту"
+    ],
+    "default": {
+      "index": 0,
+      "ascending": false
+    }
+  },
+  {
+    "type": "multi-select",
+    "id": "types",
+    "title": "Тип манги",
+    "options": [
+      "manga",
+      "manhwa",
+      "manhua",
+      "comic",
+      "manuscript"
+    ],
+    "ids": [
+      "manga",
+      "manhwa",
+      "manhua",
+      "comic",
+      "manuscript"
+    ],
+    "canExclude": false
+  },
+  {
+    "type": "multi-select",
+    "id": "statuses",
+    "title": "Статус",
+    "options": [
+      "ongoing",
+      "completed",
+      "hiatus",
+      "cancelled",
+      "unknown",
+      "abandoned",
+      "announced"
+    ],
+    "ids": [
+      "ongoing",
+      "completed",
+      "hiatus",
+      "cancelled",
+      "unknown",
+      "abandoned",
+      "announced"
+    ],
+    "canExclude": false
+  },
+  {
+    "type": "multi-select",
+    "id": "translationStatuses",
+    "title": "Статус перевода",
+    "options": [
+      "ongoing",
+      "completed",
+      "hiatus",
+      "cancelled",
+      "unknown",
+      "abandoned",
+      "announced"
+    ],
+    "ids": [
+      "ongoing",
+      "completed",
+      "hiatus",
+      "cancelled",
+      "unknown",
+      "abandoned",
+      "announced"
+    ],
+    "canExclude": false
+  },
+  {
+    "type": "multi-select",
+    "id": "pegiRatings",
+    "title": "Возрастное ограничение",
+    "options": [
+      "3+",
+      "6+",
+      "12+",
+      "16+",
+      "18+"
+    ],
+    "ids": [
+      "3+",
+      "6+",
+      "12+",
+      "16+",
+      "18+"
+    ],
+    "canExclude": false
+  },
+  {
+    "type": "text",
+    "id": "releaseYearFrom",
+    "title": "Год от (1990–2100)"
+  },
+  {
+    "type": "text",
+    "id": "releaseYearTo",
+    "title": "Год до (1990–2100)"
+  }
+]

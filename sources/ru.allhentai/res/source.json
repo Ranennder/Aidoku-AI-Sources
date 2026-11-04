@@ -5,7 +5,7 @@
     "version": 1,
     "url": "https://20.allhen.online",
     "contentRating": 2,
-    "minAppVersion": "0.9.8",
+    "minAppVersion": "0.9.9",
     "languages": [
       "ru"
     ]
@@ -13,11 +13,11 @@
   "listings": [
     {
       "id": "popular",
-      "name": "Popular"
+      "name": "Популярное"
     },
     {
       "id": "latest",
-      "name": "Latest"
+      "name": "Последние обновления"
     }
   ]
 }

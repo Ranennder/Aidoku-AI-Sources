@@ -15,7 +15,7 @@ fn catalog_uses_pagination_and_stable_slug() {
 }
 
 #[aidoku_test]
-fn chapters_preserve_fractional_numbers_hash_and_date() {
+fn chapters_preserve_fractional_numbers_stable_keys_and_date() {
 	let document = Html::parse(r#"<html><script>var user_hash = 'sample_hash';</script><table>
 	<tr class="item-row"><td class="item-title" data-num="125"><a class="chapter-link" href="/sample/vol1/12.5" title="Example (Переводчик)">Part</a></td><td class="date"></td><td class="d-none">04.11.26</td></tr>
 	<tr class="item-row"><td><a class="chapter-link" href="/sample/vol1/13">Locked</a></td><td class="date text-info"></td></tr>
@@ -23,9 +23,44 @@ fn chapters_preserve_fractional_numbers_hash_and_date() {
 	let chapters = parse_chapters(&document, "https://example.org").unwrap();
 	assert_eq!(chapters.len(), 1);
 	assert_eq!(chapters[0].chapter_number, Some(12.5));
-	assert_eq!(chapters[0].key, "/sample/vol1/12.5?mtr=true&d=sample_hash");
+	assert_eq!(chapters[0].key, "/sample/vol1/12.5");
+	assert_eq!(
+		chapters[0].url.as_deref(),
+		Some("https://example.org/sample/vol1/12.5")
+	);
 	assert_eq!(chapters[0].date_uploaded, Some(1793750400));
 	assert_eq!(chapters[0].scanlators, Some(vec![String::from("Example")]));
+}
+
+#[aidoku_test]
+fn login_and_account_changes_only_change_the_reader_request_not_chapter_identity() {
+	let html = r#"<html><script>var user_hash = 'fixture-first';</script><table><tr class='item-row'><td class='item-title' data-num='10'><a class='chapter-link' href='/sample/vol1/1?d=obsolete&amp;mtr=true'>Chapter</a></td><td class='date'></td></tr></table></html>"#;
+	let first = Html::parse(html).unwrap();
+	let second = Html::parse(html.replace("fixture-first", "fixture-second")).unwrap();
+	let first_chapters = parse_chapters(&first, "https://example.org").unwrap();
+	let second_chapters = parse_chapters(&second, "https://example.org").unwrap();
+	assert_eq!(first_chapters[0].key, "/sample/vol1/1");
+	assert_eq!(first_chapters[0].key, second_chapters[0].key);
+	assert_eq!(
+		reader_path(&first_chapters[0].key, None),
+		"/sample/vol1/1?mtr=true"
+	);
+	assert_eq!(
+		reader_path(&first_chapters[0].key, user_hash(&first).as_deref()),
+		"/sample/vol1/1?mtr=true&d=fixture-first"
+	);
+	assert_eq!(
+		reader_path(&second_chapters[0].key, user_hash(&second).as_deref()),
+		"/sample/vol1/1?mtr=true&d=fixture-second"
+	);
+	assert_eq!(
+		chapter_path(
+			"https://example.org/sample/vol1/1?d=obsolete&mtr=true",
+			"https://example.org"
+		)
+		.unwrap(),
+		first_chapters[0].key
+	);
 }
 
 #[aidoku_test]
@@ -53,6 +88,26 @@ fn reader_refuses_missing_pages_and_purchase_form() {
 			"https://example.org/sample"
 		)
 		.is_err()
+	);
+}
+
+#[aidoku_test]
+fn reader_extracts_script_urls_from_the_document_and_supplies_referer() {
+	let document = Html::parse(r#"<html><body><script>var chapterInfo={};rm_h.readerDoInit([['/pages','//cdn.example.org','/1.jpg'],['/pages','//cdn.example.org','/2.webp']]);</script></body></html>"#).unwrap();
+	let pages = parse_pages(
+		&document,
+		"https://example.org",
+		"https://example.org/sample/vol1/1",
+	)
+	.unwrap();
+	assert_eq!(pages.len(), 2);
+	let PageContent::Url(url, Some(context)) = &pages[0].content else {
+		panic!("Missing image context");
+	};
+	assert_eq!(url, "https://cdn.example.org/pages/1.jpg");
+	assert_eq!(
+		context.get("referer").map(String::as_str),
+		Some("https://example.org/sample/vol1/1")
 	);
 }
 

@@ -1,0 +1,32 @@
+{
+  "info": {
+    "id": "multi.hentaizap",
+    "name": "HentaiZap",
+    "version": 1,
+    "url": "https://hentaizap.com",
+    "languages": [
+      "en",
+      "ja",
+      "es",
+      "fr",
+      "ko",
+      "de",
+      "ru"
+    ],
+    "contentRating": 2,
+    "minAppVersion": "0.9.9"
+  },
+  "listings": [
+    {
+      "id": "popular",
+      "name": "Popular"
+    },
+    {
+      "id": "latest",
+      "name": "Latest"
+    }
+  ],
+  "config": {
+    "languageSelectType": "single"
+  }
+}

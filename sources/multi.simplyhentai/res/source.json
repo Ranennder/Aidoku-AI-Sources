@@ -1,0 +1,35 @@
+{
+  "info": {
+    "id": "multi.simplyhentai",
+    "name": "Simply Hentai",
+    "version": 1,
+    "url": "https://www.simply-hentai.com",
+    "languages": [
+      "en",
+      "ja",
+      "zh",
+      "ko",
+      "es",
+      "ru",
+      "fr",
+      "de",
+      "it",
+      "pl"
+    ],
+    "contentRating": 2,
+    "minAppVersion": "0.9.8"
+  },
+  "listings": [
+    {
+      "id": "popular",
+      "name": "Popular"
+    },
+    {
+      "id": "latest",
+      "name": "Latest"
+    }
+  ],
+  "config": {
+    "languageSelectType": "single"
+  }
+}

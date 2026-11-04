@@ -1,0 +1,42 @@
+[
+  {
+    "type": "select",
+    "id": "sort",
+    "title": "Sort",
+    "options": [
+      "Popular",
+      "Latest",
+      "Downloads",
+      "Top rated"
+    ],
+    "ids": [
+      "pp",
+      "lt",
+      "dl",
+      "tr"
+    ],
+    "default": "pp"
+  },
+  {
+    "type": "multi-select",
+    "id": "category",
+    "title": "Categories",
+    "options": [
+      "Manga",
+      "Doujinshi",
+      "Western",
+      "Image set",
+      "Artist CG",
+      "Game CG"
+    ],
+    "ids": [
+      "m",
+      "d",
+      "w",
+      "i",
+      "a",
+      "g"
+    ],
+    "canExclude": false
+  }
+]

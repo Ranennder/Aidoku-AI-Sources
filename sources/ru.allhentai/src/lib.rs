@@ -1,5 +1,5 @@
 #![no_std]
-use aidoku::prelude::*;
+use aidoku::{Source, prelude::*};
 use grouple::{GroupLe, Site};
 struct AllHentai;
 impl Site for AllHentai {

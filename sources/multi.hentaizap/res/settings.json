@@ -1,0 +1,42 @@
+[
+  {
+    "type": "group",
+    "title": "Language",
+    "items": [
+      {
+        "type": "select",
+        "key": "siteLanguage",
+        "title": "Gallery language",
+        "values": [
+          "auto",
+          "all",
+          "speechless",
+          "en",
+          "ja",
+          "es",
+          "fr",
+          "ko",
+          "de",
+          "ru"
+        ],
+        "titles": [
+          "Selected source language",
+          "All languages",
+          "Speechless",
+          "English",
+          "Japanese",
+          "Spanish",
+          "French",
+          "Korean",
+          "German",
+          "Russian"
+        ],
+        "default": "auto",
+        "refreshes": [
+          "listings",
+          "content"
+        ]
+      }
+    ]
+  }
+]

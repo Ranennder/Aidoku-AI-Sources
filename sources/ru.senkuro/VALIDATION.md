@@ -16,10 +16,16 @@ Access restrictions are preserved.
 
 ## Offline checks
 
-5 WASM tests use synthetic keys, metadata or reader representations without
+6 WASM tests use synthetic keys, metadata or reader representations without
 HTTP. Resource JSON and 128x128 PNG headers, exact SDK locks and formatting are
 checked locally. Actual Rust/WASM compilation and runtime tests require Linux CI;
 the Windows development machine has no MSVC linker.
 
 The inherited native engine selects the primary translation branch (or the first
 branch when no primary branch is marked). Alternative branches are not exposed.
+
+Web login uses Aidoku AI 0.9.9 default cookie saving, including parent-domain SSO
+cookies. No unrelated chapter is requested to verify an account, and no fixed
+User-Agent overrides the real WebView/network identity. The source reads
+the `.keys`/`.values` cookie map on every API request; logout clears it.
+An additional offline regression covers that native storage path without HTTP.

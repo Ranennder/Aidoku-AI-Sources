@@ -1,0 +1,32 @@
+[
+	{
+		"type": "group",
+		"title": "Источник",
+		"items": [
+			{
+				"type": "text",
+				"key": "baseUrl",
+				"title": "Домен сайта",
+				"default": "https://nude-moon.org",
+				"keyboardType": 3,
+				"autocorrectionDisabled": true,
+				"refreshes": [
+					"content",
+					"listings"
+				]
+			},
+			{
+				"type": "login",
+				"key": "login",
+				"method": "web",
+				"title": "Войти на сайте",
+				"url": "https://nude-moon.org",
+				"clearCookiesOnLogOut": true,
+				"refreshes": [
+					"content"
+				],
+				"urlKey": "baseUrl"
+			}
+		]
+	}
+]

@@ -53,6 +53,19 @@ fn absolute(url: &str, base: &str) -> Option<String> {
 	}
 }
 
+fn chapter_path(url: &str, base: &str) -> Result<String> {
+	let path = site_path(url, base)?;
+	Ok(path.split('?').next().unwrap_or(&path).into())
+}
+
+fn reader_path(path: &str, hash: Option<&str>) -> String {
+	let path = path.split('?').next().unwrap_or(path);
+	match hash {
+		Some(hash) => format!("{path}?mtr=true&d={hash}"),
+		None => format!("{path}?mtr=true"),
+	}
+}
+
 fn login_cookie() -> Option<String> {
 	let mut entries: Vec<_> = defaults_get_map("login")?
 		.into_iter()
@@ -165,9 +178,22 @@ impl<S: Site> Source for GroupLe<S> {
 		}
 		Ok(manga)
 	}
-	fn get_page_list(&self, _manga: Manga, chapter: Chapter) -> Result<Vec<Page>> {
-		let path = site_path(&chapter.key, S::URL)?;
-		parse_pages(&self.document(&path)?, S::URL, &format!("{}{path}", S::URL))
+	fn get_page_list(&self, manga: Manga, chapter: Chapter) -> Result<Vec<Page>> {
+		let path = chapter_path(&chapter.key, S::URL)?;
+		// The website requires the current user's hash for restricted chapters.
+		// Refresh it after login/account changes without changing chapter identity
+		// or persisting an account's hash in chapter keys and saved chapter URLs.
+		let hash = if login_cookie().is_some() {
+			user_hash(&self.document(&manga.key)?)
+		} else {
+			None
+		};
+		let reader = reader_path(&path, hash.as_deref());
+		parse_pages(
+			&self.document(&reader)?,
+			S::URL,
+			&format!("{}{reader}", S::URL),
+		)
 	}
 }
 
@@ -353,7 +379,7 @@ fn parse_details(document: &Document, mut manga: Manga, base: &str, adult: bool)
 
 fn user_hash(document: &Document) -> Option<String> {
 	document.select("script")?.find_map(|s| {
-		let script = s.data()?;
+		let script = s.html()?;
 		let tail = script.split_once("user_hash")?.1;
 		let start = tail.find(['\'', '"'])?;
 		let (hash, _) = js_string(&tail[start..])?;
@@ -372,7 +398,6 @@ fn parse_chapters(document: &Document, base: &str) -> Result<Vec<Chapter>> {
 	{
 		bail!("Главы удалены по требованию правообладателя.");
 	}
-	let hash = user_hash(document);
 	let mut result = Vec::new();
 	if let Some(rows) = document.select("tr.item-row") {
 		for row in rows {
@@ -385,13 +410,7 @@ fn parse_chapters(document: &Document, base: &str) -> Result<Vec<Chapter>> {
 			let Some(href) = link.attr("href") else {
 				continue;
 			};
-			let mut key = site_path(&href, base)?;
-			let separator = if key.contains('?') { '&' } else { '?' };
-			key.push(separator);
-			key.push_str("mtr=true");
-			if let Some(hash) = &hash {
-				key.push_str(&format!("&d={hash}"));
-			}
+			let key = chapter_path(&href, base)?;
 			if result.iter().any(|ch: &Chapter| ch.key == key) {
 				continue;
 			}
@@ -402,7 +421,7 @@ fn parse_chapters(document: &Document, base: &str) -> Result<Vec<Chapter>> {
 				.map(|n| n / 10.0);
 			let date = row
 				.select("td.d-none")
-				.and_then(|es| es.last())
+				.and_then(|mut es| es.next_back())
 				.and_then(|e| e.text())
 				.and_then(|s| parse_date(format!("{} 00:00:00", s.trim()), "dd.MM.yy HH:mm:ss"));
 			let scanlator = link
@@ -423,7 +442,7 @@ fn parse_chapters(document: &Document, base: &str) -> Result<Vec<Chapter>> {
 	if result.is_empty() {
 		let scripts = document
 			.select("script")
-			.map(|es| es.filter_map(|e| e.data()).collect::<Vec<_>>().join("\n"))
+			.map(|es| es.filter_map(|e| e.html()).collect::<Vec<_>>().join("\n"))
 			.unwrap_or_default();
 		if scripts.contains("blockedForAnonymous")
 			|| document.select_first("form[action*='login']").is_some()
@@ -532,7 +551,7 @@ fn parse_pages(document: &Document, base: &str, referer: &str) -> Result<Vec<Pag
 	let mut urls = Vec::new();
 	if let Some(scripts) = document.select("script") {
 		for script in scripts {
-			if let Some(data) = script.data() {
+			if let Some(data) = script.html() {
 				urls = image_triples(&data, base);
 				if !urls.is_empty() {
 					break;

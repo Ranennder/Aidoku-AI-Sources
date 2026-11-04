@@ -1,0 +1,12 @@
+Aidoku AI source port: multi.simplyhentai
+Copyright 2026 Ranennder and contributors.
+
+Site protocol/selectors are adapted from src/all/simplyhentai in
+https://github.com/keiyoushi/extensions-source,
+revision ee661f5233b346559fbdd53993d447c318c5aef0.
+Upstream license: Apache-2.0, included as LICENSE.txt.
+Original extension authors and contributors retain their rights.
+The native port and its modifications are under Apache-2.0.
+The SDK MIT license is included as LICENSE-AIDOKU-SDK.txt.
+Site names and icons identify their respective providers.
+This source repository does not host manga pages.

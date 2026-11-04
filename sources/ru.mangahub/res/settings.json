@@ -1,0 +1,17 @@
+[
+  {
+    "type": "group",
+    "title": "Вход",
+    "items": [
+      {
+        "type": "login",
+        "key": "login",
+        "method": "web",
+        "title": "Войти на сайте",
+        "url": "https://mangahub.ru",
+        "clearCookiesOnLogOut": true
+      }
+    ]
+  }
+]
+

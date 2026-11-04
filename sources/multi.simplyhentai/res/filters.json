@@ -1,0 +1,43 @@
+[
+  {
+    "type": "select",
+    "id": "sort",
+    "title": "Sort",
+    "options": [
+      "Relevance",
+      "Upload date",
+      "Popularity"
+    ],
+    "ids": [
+      "",
+      "upload-date",
+      "popularity"
+    ],
+    "default": ""
+  },
+  {
+    "type": "text",
+    "id": "series_title",
+    "title": "Series"
+  },
+  {
+    "type": "text",
+    "id": "tags",
+    "title": "Tags, separated by commas"
+  },
+  {
+    "type": "text",
+    "id": "artists",
+    "title": "Artists, separated by commas"
+  },
+  {
+    "type": "text",
+    "id": "translators",
+    "title": "Translators, separated by commas"
+  },
+  {
+    "type": "text",
+    "id": "characters",
+    "title": "Characters, separated by commas"
+  }
+]
