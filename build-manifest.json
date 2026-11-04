@@ -1,26 +1,26 @@
 {
-  "sourceCommit": "3927e06ee352367d69f733ca04df940b374d1579",
+  "sourceCommit": "e457b835fe4c88872e5069101c642fe0b071b168",
   "sdkRevision": "ae6485e3c14ecd1fd5497d170eae884c68d04a87",
   "packages": [
     {
       "id": "ru.mangabuff",
-      "version": 1,
-      "size": 92947,
-      "sha256": "67758af4fe8b75c789d4c686f5eebf860ce98fdf44731e6fdad5911c04401a98",
-      "wasm_sha256": "d524334e5eea86e893fae4b2340c15125862cc2bffb517c3a2386866d3e32917",
+      "version": 2,
+      "size": 97466,
+      "sha256": "2e80910ee9f728df7b4fa4fbbeb1d9664b86d42ca2edd6704bb71f27d3626c30",
+      "wasm_sha256": "14caf4466a1eed4f48a590910dc049045e1a18d1ab274e4f347a945ee274bcaf",
       "crate": "mangabuff",
-      "packageURL": "sources/ru.mangabuff-v1.aix",
-      "iconURL": "icons/ru.mangabuff-v1.png"
+      "packageURL": "sources/ru.mangabuff-v2.aix",
+      "iconURL": "icons/ru.mangabuff-v2.png"
     },
     {
       "id": "ru.mangalib",
-      "version": 10,
-      "size": 159369,
-      "sha256": "c694afda5aba7b09e9b063825f22fc004d59f4a51b4ebd1825d751c6cf7c7c8d",
-      "wasm_sha256": "bd58cf84d246ebecadce528ad402769e4fac778407b6312c15d7b4d31abc1e08",
+      "version": 11,
+      "size": 159960,
+      "sha256": "8eed174657087409477931568ab023f5542a1304b9a2553109811cc1dc54c451",
+      "wasm_sha256": "172d3b96c6a48dd68cfa8a429a00829de3aebff32d4b735d113bc1e777892e2d",
       "crate": "mangalib",
-      "packageURL": "sources/ru.mangalib-v10.aix",
-      "iconURL": "icons/ru.mangalib-v10.png"
+      "packageURL": "sources/ru.mangalib-v11.aix",
+      "iconURL": "icons/ru.mangalib-v11.png"
     }
   ]
 }
