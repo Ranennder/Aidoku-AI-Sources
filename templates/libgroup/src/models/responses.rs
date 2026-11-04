@@ -10,44 +10,37 @@ use super::{
 };
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct UserResponse {
 	pub data: LibGroupUser,
 }
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct MangaListResponse {
 	pub data: Vec<LibGroupManga>,
 	pub meta: LibGroupMeta,
 }
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct MangaDetailResponse {
 	pub data: LibGroupManga,
 }
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct ChaptersResponse {
 	pub data: Vec<LibGroupChapterListItem>,
 }
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct ChapterResponse {
 	pub data: Option<LibGroupChapterData>,
 }
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct MangaCoversResponse {
 	pub data: Vec<LibGroupCoverItem>,
 }
 
 #[derive(Default, Deserialize)]
-#[serde(default)]
 pub struct ConstantsResponse {
 	pub data: LibGroupConstantsData,
 }

@@ -101,9 +101,10 @@ impl ChaptersCache {
 
 static CHAPTERS_CACHE: Once<ChaptersCache> = Once::new();
 
-/// Global accessor — lazy init
-pub fn get_chapters_cache(ttl_seconds: Option<i64>) -> &'static ChaptersCache {
-	CHAPTERS_CACHE.call_once(|| ChaptersCache::new_with_ttl(ttl_seconds, current_date))
+/// Migration and reading share a bounded cache. The first callback must not
+/// determine its lifetime: migration may run before the first page is opened.
+pub fn get_chapters_cache() -> &'static ChaptersCache {
+	CHAPTERS_CACHE.call_once(|| ChaptersCache::new_with_ttl(Some(3600), current_date))
 }
 
 #[cfg(test)]

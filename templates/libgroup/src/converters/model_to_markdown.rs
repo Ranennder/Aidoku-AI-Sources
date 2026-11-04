@@ -15,16 +15,16 @@ pub fn convert_model_to_markdown(
 	model: &LibGroupContentModel,
 	attachments: &[LibGroupAttachment],
 	ctx: &Context,
-) -> String {
+) -> aidoku::Result<String> {
 	let mut markdown = String::new();
 
 	if let Some(content) = &model.content {
 		for node in content {
-			convert_node_to_markdown(node, &mut markdown, attachments, ctx);
+			convert_node_to_markdown(node, &mut markdown, attachments, ctx)?;
 		}
 	}
 
-	markdown.trim().to_string()
+	Ok(markdown.trim().to_string())
 }
 
 fn convert_node_to_markdown(
@@ -32,7 +32,7 @@ fn convert_node_to_markdown(
 	output: &mut String,
 	attachments: &[LibGroupAttachment],
 	ctx: &Context,
-) {
+) -> aidoku::Result<()> {
 	match node.node_type.as_str() {
 		"paragraph" => {
 			if let Some(content) = &node.content {
@@ -47,7 +47,7 @@ fn convert_node_to_markdown(
 				&& let Some(images) = &attrs.images
 			{
 				for img in images {
-					let image_url = attachments
+					let attachment_url = attachments
 						.iter()
 						.find(|a| {
 							a.name.as_ref() == Some(&img.image)
@@ -66,15 +66,15 @@ fn convert_node_to_markdown(
 							} else {
 								format!("{}/{}", ctx.base_url.trim_end_matches('/'), url)
 							}
-						})
-						.unwrap_or_else(|| {
-							if img.image.starts_with("http://") || img.image.starts_with("https://")
-							{
-								img.image.clone()
-							} else {
-								format!("{}{}", get_selected_image_server_url(ctx), img.image)
-							}
 						});
+					let image_url = if let Some(url) = attachment_url {
+						url
+					} else if img.image.starts_with("http://") || img.image.starts_with("https://")
+					{
+						img.image.clone()
+					} else {
+						format!("{}{}", get_selected_image_server_url(ctx)?, img.image)
+					};
 
 					output.push_str(&format!("![]({image_url})\n\n"));
 				}
@@ -140,6 +140,7 @@ fn convert_node_to_markdown(
 			}
 		}
 	}
+	Ok(())
 }
 
 fn convert_text_node_to_markdown(text_node: &LibGroupTextNode, output: &mut String) {

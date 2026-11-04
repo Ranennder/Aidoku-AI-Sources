@@ -68,10 +68,9 @@ pub fn load_popular_manga(ctx: &Context) -> Result<()> {
 		.take(10)
 		.map(|manga_data| {
 			// Try to fetch details, fallback to basic if it fails
-			fetch_manga_details(&manga_data.slug_url, ctx)
-				.unwrap_or_else(|_| manga_data.into_manga(ctx))
+			fetch_manga_details(&manga_data.slug_url, ctx).or_else(|_| manga_data.into_manga(ctx))
 		})
-		.collect();
+		.collect::<Result<_>>()?;
 
 	send_popular_component(entries);
 	Ok(())
@@ -90,8 +89,8 @@ pub fn load_currently_reading(ctx: &Context) -> Result<()> {
 		.data
 		.into_iter()
 		.take(30)
-		.map(|manga_data| Link::from(manga_data.into_manga(ctx)))
-		.collect();
+		.map(|manga_data| manga_data.into_manga(ctx).map(Link::from))
+		.collect::<Result<_>>()?;
 
 	send_scroller_component(
 		TRENDING_TITLE,
@@ -121,8 +120,8 @@ pub fn load_latest_updates(ctx: &Context) -> Result<()> {
 		.data
 		.into_iter()
 		.take(30)
-		.map(|manga_data| Link::from(manga_data.into_manga(ctx)))
-		.collect();
+		.map(|manga_data| manga_data.into_manga(ctx).map(Link::from))
+		.collect::<Result<_>>()?;
 
 	send_scroller_component(LATEST_TITLE, None, entries, "latest", LATEST_TITLE);
 	Ok(())
@@ -140,7 +139,7 @@ fn fetch_manga_details(slug_url: &str, ctx: &Context) -> Result<Manga> {
 		.authed(ctx)?
 		.parse_json::<MangaDetailResponse>()?
 		.data
-		.into_manga(ctx);
+		.into_manga(ctx)?;
 
 	Ok(manga)
 }

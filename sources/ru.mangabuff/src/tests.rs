@@ -214,6 +214,7 @@ fn inaccessible_or_empty_chapters_report_errors_instead_of_zero_pages() {
 fn deep_links_preserve_the_exact_volume_and_decimal_chapter_path() {
 	let source = MangaBuff {
 		csrf_token: RefCell::new(None),
+		login_cookie: RefCell::new(None),
 	};
 	assert_eq!(
 		source
@@ -230,6 +231,122 @@ fn deep_links_preserve_the_exact_volume_and_decimal_chapter_path() {
 			.unwrap(),
 		None
 	);
+}
+
+#[aidoku_test]
+fn saved_web_login_credentials_only_target_the_exact_https_site() {
+	let mut cookies = aidoku::HashMap::new();
+	cookies.insert("mangabuff_session".into(), "fixture-session".into());
+	cookies.insert("remember_web_fixture".into(), "fixture-remember".into());
+	cookies.insert("third_party_tracker".into(), "unrelated".into());
+	cookies.insert("__ddg10_".into(), "stale-webview-guard".into());
+	let header = auth::cookie_header(cookies);
+	assert_eq!(
+		header.as_deref(),
+		Some("mangabuff_session=fixture-session; remember_web_fixture=fixture-remember")
+	);
+	assert_eq!(
+		auth::cookie_for_url("https://mangabuff.ru/manga/example", header.clone()),
+		header
+	);
+	for url in [
+		"http://mangabuff.ru/manga/example",
+		"https://c3.mangabuff.ru/page.jpg",
+		"https://mangabuff.ru.example.com/manga/example",
+		"https://mangabuff.ru@example.com/page",
+		"https://example.com/page",
+	] {
+		assert_eq!(auth::cookie_for_url(url, header.clone()), None);
+	}
+}
+
+#[aidoku_test]
+fn saved_login_changes_and_logout_invalidate_csrf_without_freezing_headers() {
+	use aidoku::imports::defaults::{DefaultValue, defaults_set};
+	let source = MangaBuff {
+		csrf_token: RefCell::new(Some("fixture-anonymous-csrf".into())),
+		login_cookie: RefCell::new(None),
+	};
+	defaults_set(
+		"mangabuffLogin.keys",
+		DefaultValue::StringArray(aidoku::alloc::vec![
+			"mangabuff_session".into(),
+			"remember_web_fixture".into()
+		]),
+	);
+	defaults_set(
+		"mangabuffLogin.values",
+		DefaultValue::StringArray(aidoku::alloc::vec![
+			"fixture-session-a".into(),
+			"fixture-remember".into()
+		]),
+	);
+	assert!(
+		source
+			.synchronize_login()
+			.unwrap()
+			.contains("fixture-session-a")
+	);
+	assert!(source.csrf_token.borrow().is_none());
+	*source.csrf_token.borrow_mut() = Some("fixture-authenticated-csrf".into());
+	// The WebView dictionary can publish the same cookies in a different order.
+	defaults_set(
+		"mangabuffLogin.keys",
+		DefaultValue::StringArray(aidoku::alloc::vec![
+			"remember_web_fixture".into(),
+			"mangabuff_session".into()
+		]),
+	);
+	defaults_set(
+		"mangabuffLogin.values",
+		DefaultValue::StringArray(aidoku::alloc::vec![
+			"fixture-remember".into(),
+			"fixture-session-a".into()
+		]),
+	);
+	source.synchronize_login();
+	assert_eq!(
+		source.csrf_token.borrow().as_deref(),
+		Some("fixture-authenticated-csrf")
+	);
+	defaults_set(
+		"mangabuffLogin.values",
+		DefaultValue::StringArray(aidoku::alloc::vec![
+			"fixture-remember".into(),
+			"fixture-session-b".into()
+		]),
+	);
+	assert!(
+		source
+			.synchronize_login()
+			.unwrap()
+			.contains("fixture-session-b")
+	);
+	assert!(source.csrf_token.borrow().is_none());
+	*source.csrf_token.borrow_mut() = Some("fixture-refreshed-csrf".into());
+	// Missing/empty arrays are how the source observes native logout.
+	defaults_set("mangabuffLogin.keys", DefaultValue::StringArray(Vec::new()));
+	defaults_set(
+		"mangabuffLogin.values",
+		DefaultValue::StringArray(Vec::new()),
+	);
+	assert_eq!(source.synchronize_login(), None);
+	assert!(source.csrf_token.borrow().is_none());
+}
+
+#[aidoku_test]
+fn malformed_saved_cookie_values_cannot_inject_an_http_header() {
+	let mut cookies = aidoku::HashMap::new();
+	cookies.insert(
+		"mangabuff_session".into(),
+		"fixture; another=unexpected".into(),
+	);
+	cookies.insert(
+		"remember_web_fixture".into(),
+		"fixture\r\nX-Injected: value".into(),
+	);
+	cookies.insert("remember_web_invalid\n".into(), "fixture".into());
+	assert_eq!(auth::cookie_header(cookies), None);
 }
 
 #[cfg(feature = "live-tests")]

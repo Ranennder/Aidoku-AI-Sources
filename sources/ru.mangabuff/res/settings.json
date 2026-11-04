@@ -9,7 +9,8 @@
         "key": "mangabuffLogin",
         "method": "web",
         "title": "Войти в MangaBuff",
-        "url": "https://mangabuff.ru"
+        "url": "https://mangabuff.ru",
+        "clearCookiesOnLogOut": true
       }
     ]
   }

@@ -266,7 +266,7 @@ impl LibGroupChapterListItem {
 }
 
 impl LibGroupChapterData {
-	pub fn into_pages(self, ctx: &Context) -> Vec<Page> {
+	pub fn into_pages(self, ctx: &Context) -> aidoku::Result<Vec<Page>> {
 		match self {
 			LibGroupChapterData::Image(chapter) => chapter.into_pages(ctx),
 			LibGroupChapterData::Text(chapter) => chapter.into_pages(ctx),
@@ -284,18 +284,25 @@ impl LibGroupImageChapter {
 		self.pages
 	}
 
-	pub fn into_pages(self, ctx: &Context) -> Vec<Page> {
-		self.ordered_pages()
+	pub fn into_pages(self, ctx: &Context) -> aidoku::Result<Vec<Page>> {
+		self.into_pages_with_server(|| get_selected_image_server_url(ctx))
+	}
+
+	fn into_pages_with_server(
+		self,
+		resolve_server: impl FnOnce() -> aidoku::Result<String>,
+	) -> aidoku::Result<Vec<Page>> {
+		// Resolve once for the whole chapter. A failed constants request must not
+		// generate relative page URLs or repeat that request for every page.
+		let server = resolve_server()?;
+		Ok(self
+			.ordered_pages()
 			.into_iter()
 			.map(|page| Page {
-				content: PageContent::url(format!(
-					"{}{}",
-					get_selected_image_server_url(ctx),
-					page.url
-				)),
+				content: PageContent::url(format!("{}{}", server, page.url)),
 				..Default::default()
 			})
-			.collect()
+			.collect())
 	}
 }
 
@@ -303,17 +310,17 @@ impl LibGroupImageChapter {
 mod test;
 
 impl LibGroupTextChapter {
-	pub fn into_pages(self, ctx: &Context) -> Vec<Page> {
+	pub fn into_pages(self, ctx: &Context) -> aidoku::Result<Vec<Page>> {
 		let markdown = match self.content {
 			LibGroupContentType::Html(html) => convert_html_to_markdown(&html),
 			LibGroupContentType::Model(model) => {
-				convert_model_to_markdown(&model, &self.attachments, ctx)
+				convert_model_to_markdown(&model, &self.attachments, ctx)?
 			}
 		};
 
-		vec![Page {
+		Ok(vec![Page {
 			content: PageContent::text(markdown),
 			..Default::default()
-		}]
+		}])
 	}
 }

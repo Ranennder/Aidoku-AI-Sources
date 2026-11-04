@@ -15,25 +15,47 @@ use aidoku::{
 use core::cell::RefCell;
 use serde::Deserialize;
 
+mod auth;
 mod parser;
 use parser::{BASE_URL, canonical_path, parse_catalog, parse_chapters, parse_details, parse_pages};
 
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36";
-
 struct MangaBuff {
 	csrf_token: RefCell<Option<String>>,
+	login_cookie: RefCell<Option<String>>,
 }
 
 impl MangaBuff {
-	fn request(url: &str) -> Result<Request> {
-		Ok(Request::get(url)?
-			.header("Referer", &format!("{BASE_URL}/"))
-			.header("User-Agent", USER_AGENT)
-			.timeout(30.0))
+	fn synchronize_login(&self) -> Option<String> {
+		let cookie = auth::stored_login_cookie();
+		let mut previous = self.login_cookie.borrow_mut();
+		if *previous != cookie {
+			self.csrf_token.borrow_mut().take();
+			*previous = cookie.clone();
+		}
+		cookie
+	}
+
+	fn with_site_cookies(&self, mut request: Request) -> Request {
+		let cookie = self.synchronize_login();
+		if let Some(cookie) = request
+			.url()
+			.and_then(|url| auth::cookie_for_url(url, cookie))
+		{
+			request.set_header("Cookie", &cookie);
+		}
+		request
+	}
+
+	fn request(&self, url: &str) -> Result<Request> {
+		Ok(self.with_site_cookies(
+			Request::get(url)?
+				.header("Referer", &format!("{BASE_URL}/"))
+				.timeout(30.0),
+		))
 	}
 
 	fn document(&self, path: &str) -> Result<Document> {
-		let response = Self::request(&format!("{BASE_URL}{path}"))?.send()?;
+		let response = self.request(&format!("{BASE_URL}{path}"))?.send()?;
 		parser::check_status(response.status_code())?;
 		let document = response.get_html()?;
 		self.remember_token(&document);
@@ -47,6 +69,7 @@ impl MangaBuff {
 	}
 
 	fn token(&self) -> Result<String> {
+		self.synchronize_login();
 		if let Some(token) = self.csrf_token.borrow().clone() {
 			return Ok(token);
 		}
@@ -60,18 +83,20 @@ impl MangaBuff {
 
 	fn chapters_response(&self, manga_id: &str) -> Result<Response> {
 		let token = self.token()?;
-		Ok(Request::post(format!("{BASE_URL}/chapters/load"))?
-			.header("User-Agent", USER_AGENT)
-			.header("Referer", &format!("{BASE_URL}/"))
-			.header("Origin", BASE_URL)
-			.header("X-Requested-With", "XMLHttpRequest")
-			.header("X-CSRF-TOKEN", &token)
-			.header(
-				"Content-Type",
-				"application/x-www-form-urlencoded; charset=UTF-8",
+		Ok(self
+			.with_site_cookies(
+				Request::post(format!("{BASE_URL}/chapters/load"))?
+					.header("Referer", &format!("{BASE_URL}/"))
+					.header("Origin", BASE_URL)
+					.header("X-Requested-With", "XMLHttpRequest")
+					.header("X-CSRF-TOKEN", &token)
+					.header(
+						"Content-Type",
+						"application/x-www-form-urlencoded; charset=UTF-8",
+					)
+					.body(format!("manga_id={manga_id}"))
+					.timeout(30.0),
 			)
-			.body(format!("manga_id={manga_id}"))
-			.timeout(30.0)
 			.send()?)
 	}
 
@@ -104,6 +129,7 @@ impl Source for MangaBuff {
 		set_rate_limit(1, 1, TimeUnit::Seconds);
 		Self {
 			csrf_token: RefCell::new(None),
+			login_cookie: RefCell::new(None),
 		}
 	}
 
@@ -177,9 +203,7 @@ impl ImageRequestProvider for MangaBuff {
 			.and_then(|value| canonical_path(value, true).ok())
 			.map(|path| format!("{BASE_URL}{path}"))
 			.unwrap_or_else(|| format!("{BASE_URL}/"));
-		Ok(Request::get(url)?
-			.header("Referer", &referer)
-			.header("User-Agent", USER_AGENT))
+		Ok(Request::get(url)?.header("Referer", &referer))
 	}
 }
 

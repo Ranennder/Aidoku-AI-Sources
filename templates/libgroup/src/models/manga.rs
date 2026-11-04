@@ -51,8 +51,8 @@ pub struct LibGroupCoverItem {
 }
 
 impl LibGroupManga {
-	pub fn into_manga(self, ctx: &Context) -> Manga {
-		Manga {
+	pub fn into_manga(self, ctx: &Context) -> aidoku::Result<Manga> {
+		Ok(Manga {
 			key: self.slug_url.clone(),
 			title: if !self.rus_name.is_empty() {
 				self.rus_name.clone()
@@ -82,7 +82,7 @@ impl LibGroupManga {
 					})
 					.collect()
 			}),
-			description: Some(Self::detailed_description(&self, ctx)),
+			description: Some(Self::detailed_description(&self, ctx)?),
 			url: Some(Url::manga_page(&ctx.base_url, &self.slug_url)),
 			tags: self
 				.tags
@@ -115,15 +115,15 @@ impl LibGroupManga {
 			},
 			update_strategy: UpdateStrategy::Always,
 			..Default::default()
-		}
+		})
 	}
 
-	fn detailed_description(maga: &LibGroupManga, ctx: &Context) -> String {
+	fn detailed_description(maga: &LibGroupManga, ctx: &Context) -> aidoku::Result<String> {
 		let mut description = String::new();
 
 		// Summary
 		if let Some(summary) = &maga.summary {
-			let text = convert_model_to_markdown(summary, &[], ctx);
+			let text = convert_model_to_markdown(summary, &[], ctx)?;
 			if !text.is_empty() {
 				description.push_str(&text);
 				description.push_str("\n\n");
@@ -181,6 +181,6 @@ impl LibGroupManga {
 			description.push_str(&alt_names.join(", "));
 		}
 
-		description
+		Ok(description)
 	}
 }

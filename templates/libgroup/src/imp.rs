@@ -64,7 +64,7 @@ pub trait Impl {
 			.data
 			.into_iter()
 			.map(|manga_lib_manga| manga_lib_manga.into_manga(&ctx))
-			.collect();
+			.collect::<Result<_>>()?;
 
 		let has_next_page = response.meta.has_next_page.unwrap_or_default();
 
@@ -103,7 +103,7 @@ pub trait Impl {
 					.authed(&ctx)?
 					.parse_json::<MangaDetailResponse>()?
 					.data
-					.into_manga(&ctx),
+					.into_manga(&ctx)?,
 			);
 
 			if needs_chapters {
@@ -117,7 +117,7 @@ pub trait Impl {
 				.authed(&ctx)?
 				.parse_json::<ChaptersResponse>()?
 				.data;
-			get_chapters_cache(Some(3600)).store_chapters(&slug_url, refreshed_chapters.clone());
+			get_chapters_cache().store_chapters(&slug_url, refreshed_chapters.clone());
 
 			let chapters = LibGroupChapterListItem::flatten_chapters(
 				refreshed_chapters,
@@ -136,7 +136,7 @@ pub trait Impl {
 		let ctx = Context::from_params(params);
 		let slug_url = manga.key.as_str();
 
-		let chapters = get_chapters_cache(Some(3600)).get_chapters(slug_url, &ctx)?;
+		let chapters = get_chapters_cache().get_chapters(slug_url, &ctx)?;
 		let (chapter_number, volume, branch_id) =
 			LibGroupChapterListItem::resolve_chapter(&chapters, &chapter.key)?;
 
@@ -153,7 +153,7 @@ pub trait Impl {
 			.parse_json::<ChapterResponse>()?
 			.data
 			.ok_or_else(|| AidokuError::message("Chapter is empty"))?
-			.into_pages(&ctx);
+			.into_pages(&ctx)?;
 
 		Ok(pages)
 	}
@@ -195,7 +195,7 @@ pub trait Impl {
 					.data
 					.into_iter()
 					.map(|manga_lib_manga| manga_lib_manga.into_manga(&ctx))
-					.collect();
+					.collect::<Result<_>>()?;
 
 				let has_next_page = response.meta.has_next_page.unwrap_or_default();
 
@@ -223,7 +223,7 @@ pub trait Impl {
 					.data
 					.into_iter()
 					.map(|manga_lib_manga| manga_lib_manga.into_manga(&ctx))
-					.collect();
+					.collect::<Result<_>>()?;
 
 				let has_next_page = response.meta.has_next_page.unwrap_or_default();
 
@@ -250,7 +250,7 @@ pub trait Impl {
 					.data
 					.into_iter()
 					.map(|manga_lib_manga| manga_lib_manga.into_manga(&ctx))
-					.collect();
+					.collect::<Result<_>>()?;
 
 				let has_next_page = response.meta.has_next_page.unwrap_or_default();
 
@@ -311,7 +311,7 @@ pub trait Impl {
 
 		let (chapter_number, volume_number) = (parts[0], parts[1]);
 
-		let chapters = get_chapters_cache(None).get_chapters(&manga_key, &ctx)?;
+		let chapters = get_chapters_cache().get_chapters(&manga_key, &ctx)?;
 
 		let chapter = chapters
 			.iter()
@@ -332,7 +332,7 @@ pub trait Impl {
 
 		match notification.as_str() {
 			"system.endMigration" => {
-				get_chapters_cache(None).clear();
+				get_chapters_cache().clear();
 			}
 			"token.changed" => {
 				clear_user_id();

@@ -2,10 +2,10 @@
   "info": {
     "id": "ru.mangabuff",
     "name": "MangaBuff",
-    "version": 1,
+    "version": 2,
     "url": "https://mangabuff.ru",
     "contentRating": 1,
-    "minAppVersion": "0.8.3",
+    "minAppVersion": "0.9.8",
     "languages": ["ru"]
   },
   "listings": [

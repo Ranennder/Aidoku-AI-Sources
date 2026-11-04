@@ -83,3 +83,38 @@ fn restricted_branches_remain_locked_without_attempting_to_unlock_them() {
 	assert!(chapters[0].locked);
 	assert!(!chapters[1].locked);
 }
+
+#[aidoku_test]
+fn chapter_resolves_its_image_server_once_for_all_ordered_pages() {
+	let chapter: LibGroupImageChapter =
+		serde_json::from_str(r#"{"pages":[{"slug":2,"url":"/2.jpg"},{"slug":1,"url":"/1.jpg"}]}"#)
+			.unwrap();
+	let mut resolutions = 0;
+	let pages = chapter
+		.into_pages_with_server(|| {
+			resolutions += 1;
+			Ok("https://images.example".into())
+		})
+		.unwrap();
+	assert_eq!(resolutions, 1);
+	assert_eq!(pages.len(), 2);
+	let PageContent::Url(first, _) = &pages[0].content else {
+		panic!("image expected")
+	};
+	assert_eq!(first, "https://images.example/1.jpg");
+}
+
+#[aidoku_test]
+fn missing_image_server_fails_the_chapter_instead_of_returning_relative_page_urls() {
+	let chapter: LibGroupImageChapter =
+		serde_json::from_str(r#"{"pages":[{"url":"/1.jpg"},{"url":"/2.jpg"}]}"#).unwrap();
+	assert!(
+		chapter
+			.into_pages_with_server(|| {
+				Err(aidoku::AidokuError::message(
+					"CDN configuration unavailable",
+				))
+			})
+			.is_err()
+	);
+}

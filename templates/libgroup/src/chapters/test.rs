@@ -118,3 +118,15 @@ fn refreshed_chapter_list_replaces_stale_branches_before_the_next_page_read() {
 	);
 	assert!(LibGroupChapterListItem::resolve_chapter(&chapters, "10").is_err());
 }
+
+#[aidoku_test]
+fn migration_first_and_clear_cannot_disable_the_shared_reading_cache_expiry() {
+	let cache = super::get_chapters_cache();
+	let entry = TimedVec::new(vec![make_item("migration")], 1_000_000);
+	assert!(!entry.is_expired(1_003_599, cache.ttl_seconds));
+	assert!(entry.is_expired(1_003_601, cache.ttl_seconds));
+	cache.clear();
+	let reading_cache = super::get_chapters_cache();
+	assert!(core::ptr::eq(cache, reading_cache));
+	assert!(entry.is_expired(1_003_601, reading_cache.ttl_seconds));
+}

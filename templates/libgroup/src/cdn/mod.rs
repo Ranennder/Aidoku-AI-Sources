@@ -1,5 +1,5 @@
 use aidoku::{
-	Result,
+	AidokuError, Result,
 	alloc::{String, collections::btree_map::BTreeMap},
 	imports::{net::Request, std::current_date},
 };
@@ -52,7 +52,16 @@ impl ImageServerCache {
 		Self::new_with_ttl(3600, now)
 	}
 
-	pub fn get_base_url(&self, ctx: &Context) -> String {
+	pub fn get_base_url(&self, ctx: &Context) -> Result<String> {
+		self.get_base_url_with(ctx.site_id, &get_image_server_url(), || self.load_data(ctx))
+	}
+
+	fn get_base_url_with(
+		&self,
+		site_id: u8,
+		selected_id: &str,
+		load: impl FnOnce() -> Result<BTreeMap<u8, BTreeMap<String, String>>>,
+	) -> Result<String> {
 		let now = (self.now_fn)();
 
 		// 1. Check cache
@@ -61,32 +70,34 @@ impl ImageServerCache {
 			if let Some(ref entry) = *guard
 				&& !entry.is_expired(now, self.ttl_seconds)
 			{
-				let selected_id = get_image_server_url();
-				return self.extract_url(&entry.data, &ctx.site_id, &selected_id);
+				return self.extract_url(&entry.data, &site_id, selected_id);
 			}
 		}
 
 		// 2. Fetch and update
 		let mut guard = self.cache.write();
 
-		match self.load_data(ctx) {
-			Ok(data) => {
+		// Validate the selected server before replacing a previously usable entry.
+		let loaded = load().and_then(|data| {
+			let url = self.extract_url(&data, &site_id, selected_id)?;
+			Ok((data, url))
+		});
+		match loaded {
+			Ok((data, url)) => {
 				// Success: Update cache with new data and fresh timestamp
-				let entry = CacheEntry::new(data.clone(), now);
+				let entry = CacheEntry::new(data, now);
 				*guard = Some(entry);
 
-				let selected_id = get_image_server_url();
-				self.extract_url(&data, &ctx.site_id, &selected_id)
+				Ok(url)
 			}
-			Err(_) => {
+			Err(error) => {
 				// Failure backoff
 				if let Some(ref mut entry) = *guard {
 					entry.created_at = now - self.ttl_seconds + FAILURE_COOLDOWN_SECONDS;
 
-					let selected_id = get_image_server_url();
-					self.extract_url(&entry.data, &ctx.site_id, &selected_id)
+					self.extract_url(&entry.data, &site_id, selected_id)
 				} else {
-					String::new()
+					Err(error)
 				}
 			}
 		}
@@ -118,11 +129,16 @@ impl ImageServerCache {
 		data: &BTreeMap<u8, BTreeMap<String, String>>,
 		site_id: &u8,
 		server_id: &str,
-	) -> String {
+	) -> Result<String> {
 		data.get(site_id)
 			.and_then(|site_servers| site_servers.get(server_id))
+			.filter(|url| url.starts_with("https://") || url.starts_with("http://"))
 			.cloned()
-			.unwrap_or_default()
+			.ok_or_else(|| {
+				AidokuError::message(
+					"MangaLib: сервер изображений недоступен. Повторите попытку позже.",
+				)
+			})
 	}
 }
 
@@ -132,7 +148,7 @@ pub fn get_image_server_cache() -> &'static ImageServerCache {
 	IMAGE_SERVER_CACHE.call_once(ImageServerCache::new)
 }
 
-pub fn get_selected_image_server_url(ctx: &Context) -> String {
+pub fn get_selected_image_server_url(ctx: &Context) -> Result<String> {
 	get_image_server_cache().get_base_url(ctx)
 }
 
