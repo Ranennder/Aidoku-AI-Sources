@@ -1,0 +1,11 @@
+Aidoku AI source port: ru.slashlib
+Copyright 2026 Ranennder and contributors.
+
+Adapted from Aidoku-Community/sources, revision
+4ca350a031e6e708ad1308a6f4127a69fe517841.
+Copyright 2025-2026 Aidoku community source contributors.
+Upstream license: Apache-2.0 OR MIT. Both license texts are included.
+
+The Aidoku SDK MIT license is included as LICENSE-AIDOKU-SDK.txt.
+Site names and icons identify their respective providers.
+This repository does not host manga pages.

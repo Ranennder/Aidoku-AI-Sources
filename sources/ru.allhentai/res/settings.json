@@ -1,0 +1,15 @@
+[
+  {
+    "type": "group",
+    "items": [
+      {
+        "type": "login",
+        "key": "login",
+        "method": "web",
+        "title": "Log in to AllHentai",
+        "url": "https://20.allhen.online",
+        "clearCookiesOnLogOut": true
+      }
+    ]
+  }
+]

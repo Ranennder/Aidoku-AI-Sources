@@ -1,0 +1,281 @@
+[
+	{
+		"id": "sortBy",
+		"type": "sort",
+		"title": "Sort",
+		"canAscend": true,
+		"options": [
+			"Relevance",
+			"Latest",
+			"A → Z",
+			"Chapters",
+			"Most Viewed",
+			"Most Tracked",
+			"Top Rated"
+		],
+		"default": {
+			"index": 0,
+			"ascending": false
+		}
+	},
+	{
+		"id": "origin",
+		"type": "multi-select",
+		"title": "Type",
+		"canExclude": false,
+		"options": [
+			"Manga",
+			"Manhwa",
+			"Manhua",
+			"OEL",
+			"One Shot"
+		],
+		"ids": [
+			"JP",
+			"KR",
+			"CN",
+			"EN",
+			"ONESHOT"
+		]
+	},
+	{
+		"id": "status",
+		"type": "select",
+		"title": "Status",
+		"options": [
+			"Any",
+			"Ongoing",
+			"Completed",
+			"Hiatus"
+		]
+	},
+	{
+		"id": "scanlator",
+		"type": "select",
+		"title": "Scanlator",
+		"options": [
+			"Any",
+			"Scanlator Group",
+			"No Scanlator Group"
+		],
+		"ids": [
+			"any",
+			"with",
+			"without"
+		]
+	},
+	{
+		"id": "author",
+		"type": "text",
+		"title": "Author",
+		"placeholder": "Author name"
+	},
+	{
+		"id": "artist",
+		"type": "text",
+		"title": "Artist",
+		"placeholder": "Artist name"
+	},
+	{
+		"id": "genre",
+		"type": "multi-select",
+		"title": "Genres",
+		"isGenre": true,
+		"canExclude": true,
+		"usesTagStyle": true,
+		"options": [
+			"Action",
+			"Adventure",
+			"Comedy",
+			"Drama",
+			"Fantasy",
+			"Horror",
+			"Mystery",
+			"Romance",
+			"Sci-Fi",
+			"Slice of Life",
+			"Sports",
+			"Supernatural",
+			"Thriller",
+			"Isekai",
+			"Martial Arts",
+			"Psychological",
+			"Shounen",
+			"Shoujo",
+			"Seinen",
+			"Josei",
+			"Mecha",
+			"Historical",
+			"School Life",
+			"Harem",
+			"Ecchi",
+			"Music",
+			"Cooking",
+			"Medical",
+			"Crime",
+			"Tragedy",
+			"Academy",
+			"Acting",
+			"Adult",
+			"Aliens",
+			"Animals",
+			"Anthology",
+			"Avant Garde",
+			"Award Winning",
+			"BDSM",
+			"Boys Love",
+			"Bully",
+			"Business",
+			"Child Abuse",
+			"Child Neglect",
+			"Comic",
+			"Crossdressing",
+			"Cultivation",
+			"Delinquents",
+			"Demons",
+			"Difficult Childhood",
+			"Doujinshi",
+			"Erotica",
+			"Female Protagonist",
+			"Femdom",
+			"Futanari",
+			"Gender Bender",
+			"Genderswap",
+			"Ghosts",
+			"Girls Love",
+			"Gore",
+			"Gyaru",
+			"Hentai",
+			"Hunters",
+			"Idol",
+			"Incest",
+			"Lolicon",
+			"Mafia",
+			"Magic",
+			"Mahou Shoujo",
+			"Manga",
+			"Manhua",
+			"Manhwa",
+			"Mature",
+			"Medieval Era",
+			"MILF",
+			"Military",
+			"Monster Girls",
+			"Monsters",
+			"Murim",
+			"Myth",
+			"Necromancer",
+			"Ninja",
+			"Nobility",
+			"Office Romance",
+			"Office Worker",
+			"One Shot",
+			"Otome",
+			"Overpowered",
+			"Philosophical",
+			"Playboy",
+			"Police",
+			"Politics",
+			"Post-Apocalyptic",
+			"Regression",
+			"Reincarnation",
+			"Revenge",
+			"Reverse Harem",
+			"Royalty",
+			"Samurai",
+			"Shotacon",
+			"Shoujo Ai",
+			"Shounen Ai",
+			"Smut",
+			"Superhero",
+			"Survival",
+			"System",
+			"Time Travel",
+			"Traditional Games",
+			"Uncensored",
+			"Vampires",
+			"Video Games",
+			"Villainess",
+			"Virtual Reality",
+			"War",
+			"Webtoon",
+			"Wuxia",
+			"Yaoi",
+			"Yuri",
+			"Zombies"
+		]
+	},
+	{
+		"id": "content_rating",
+		"type": "multi-select",
+		"title": "Content Rating",
+		"canExclude": true,
+		"options": [
+			"Safe",
+			"Suggestive",
+			"Erotica",
+			"Pornographic"
+		],
+		"ids": [
+			"safe",
+			"suggestive",
+			"erotica",
+			"pornographic"
+		]
+	},
+	{
+		"id": "min_rating",
+		"type": "select",
+		"title": "Rating",
+		"options": [
+			"Any",
+			"5+",
+			"6+",
+			"7+",
+			"8+",
+			"9+"
+		],
+		"ids": [
+			"any",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9"
+		]
+	},
+	{
+		"id": "min_chapters",
+		"type": "select",
+		"title": "Chapters",
+		"options": [
+			"Any",
+			"10+",
+			"25+",
+			"50+",
+			"100+"
+		],
+		"ids": [
+			"any",
+			"10",
+			"25",
+			"50",
+			"100"
+		]
+	},
+	{
+		"id": "volumes",
+		"type": "select",
+		"title": "Volume",
+		"options": [
+			"Any",
+			"Has Volumes",
+			"No Volumes"
+		],
+		"ids": [
+			"any",
+			"with",
+			"without"
+		]
+	}
+]

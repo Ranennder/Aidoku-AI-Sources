@@ -1,0 +1,50 @@
+[
+	{
+		"type": "group",
+		"title": "Аккаунт",
+		"footer": "Войдите на сайте, затем закройте окно.",
+		"items": [
+			{
+				"type": "login",
+				"key": "login",
+				"title": "Войти",
+				"method": "web",
+				"url": "https://desu.uno/login/",
+				"notification": "login",
+				"refreshes": [
+					"settings",
+					"content",
+					"listings"
+				],
+				"clearCookiesOnLogOut": true
+			}
+		]
+	},
+	{
+		"type": "group",
+		"title": "Настройки",
+		"items": [
+			{
+				"type": "switch",
+				"key": "englishTitles",
+				"title": "Английские заголовки",
+				"default": false,
+				"refreshes": [
+					"content"
+				]
+			},
+			{
+				"type": "text",
+				"key": "domain",
+				"title": "Домен",
+				"default": "desu.uno",
+				"refreshes": [
+					"content"
+				],
+				"keyboardType": 3,
+				"returnKeyType": 9,
+				"autocorrectionDisabled": true
+			}
+		]
+	}
+]

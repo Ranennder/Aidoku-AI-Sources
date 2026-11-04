@@ -1,0 +1,21 @@
+[
+	{
+		"type": "group",
+		"title": "Senkognito",
+		"footer": "Войдите в Senkognito во встроенном браузере, чтобы читать защищённые главы.",
+		"items": [
+			{
+				"type": "login",
+				"key": "senkognito_login",
+				"method": "web",
+				"title": "Войти в Senkognito через сайт",
+				"logoutTitle": "Сбросить вход Senkognito",
+				"url": "https://senkognito.com/",
+				"refreshes": [
+					"content"
+				],
+				"clearCookiesOnLogOut": true
+			}
+		]
+	}
+]

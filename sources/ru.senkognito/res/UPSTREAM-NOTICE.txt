@@ -1,0 +1,18 @@
+Aidoku AI source port: ru.senkognito
+Copyright 2026 Ranennder and contributors.
+
+Adapted from Aidoku-Community/sources, revision
+4ca350a031e6e708ad1308a6f4127a69fe517841.
+Copyright 2025-2026 Aidoku community source contributors.
+Upstream license: Apache-2.0 OR MIT. Both license texts are included.
+
+Site protocol is based on the corresponding provider in
+https://github.com/keiyoushi/extensions-source, revision
+ee661f5233b346559fbdd53993d447c318c5aef0.
+Upstream license: Apache-2.0 (included as LICENSE.txt).
+Original extension authors and contributors retain their rights.
+The native port and its modifications are under Apache-2.0.
+
+The Aidoku SDK MIT license is included as LICENSE-AIDOKU-SDK.txt.
+Site names and icons identify their respective providers.
+This repository does not host manga pages.

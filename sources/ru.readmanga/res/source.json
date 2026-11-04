@@ -1,0 +1,23 @@
+{
+  "info": {
+    "id": "ru.readmanga",
+    "name": "ReadManga",
+    "version": 1,
+    "url": "https://a.zazaza.me",
+    "contentRating": 0,
+    "minAppVersion": "0.9.8",
+    "languages": [
+      "ru"
+    ]
+  },
+  "listings": [
+    {
+      "id": "popular",
+      "name": "Popular"
+    },
+    {
+      "id": "latest",
+      "name": "Latest"
+    }
+  ]
+}
