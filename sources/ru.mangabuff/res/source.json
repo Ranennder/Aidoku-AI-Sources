@@ -2,7 +2,7 @@
   "info": {
     "id": "ru.mangabuff",
     "name": "MangaBuff",
-    "version": 2,
+    "version": 3,
     "url": "https://mangabuff.ru",
     "contentRating": 1,
     "minAppVersion": "0.9.8",

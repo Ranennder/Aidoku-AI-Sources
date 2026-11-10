@@ -201,13 +201,20 @@ fn inaccessible_or_empty_chapters_report_errors_instead_of_zero_pages() {
 	assert!(parse_pages(&fixture("<h1>Доступ ограничен 18+</h1>"), BASE_URL).is_err());
 	assert!(parse_pages(&fixture("<div class='reader__pages'></div>"), BASE_URL).is_err());
 	for status in [401, 403, 404, 419, 429, 500] {
-		assert!(parser::check_status(status).is_err());
+		let aidoku::AidokuError::Message(message) = parser::check_status(status).unwrap_err()
+		else {
+			panic!("user-facing HTTP error expected")
+		};
+		assert!(message.starts_with(&format!("HTTP {status}: ")));
+		assert!(message.contains("MangaBuff"));
 	}
 	let aidoku::AidokuError::Message(message) = parser::check_status(401).unwrap_err() else {
 		panic!("user-facing error expected")
 	};
 	assert!(message.contains("Войти в MangaBuff"));
-	assert!(parser::check_status(200).is_ok());
+	for status in 200..=299 {
+		assert!(parser::check_status(status).is_ok());
+	}
 }
 
 #[aidoku_test]
