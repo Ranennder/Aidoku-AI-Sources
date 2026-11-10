@@ -161,12 +161,12 @@
 		{
 			"id": "ru.mangabuff",
 			"name": "MangaBuff",
-			"version": 2,
+			"version": 3,
 			"languages": [
 				"ru"
 			],
-			"downloadURL": "sources/ru.mangabuff-v2.aix",
-			"iconURL": "icons/ru.mangabuff-v2.png",
+			"downloadURL": "sources/ru.mangabuff-v3.aix",
+			"iconURL": "icons/ru.mangabuff-v3.png",
 			"contentRating": 1,
 			"minAppVersion": "0.9.8",
 			"baseURL": "https://mangabuff.ru"
