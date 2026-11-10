@@ -4,12 +4,12 @@
 		{
 			"id": "en.asurascans",
 			"name": "Asura Scans",
-			"version": 20,
+			"version": 21,
 			"languages": [
 				"en"
 			],
-			"downloadURL": "sources/en.asurascans-v20.aix",
-			"iconURL": "icons/en.asurascans-v20.png",
+			"downloadURL": "sources/en.asurascans-v21.aix",
+			"iconURL": "icons/en.asurascans-v21.png",
 			"contentRating": 0,
 			"minAppVersion": "0.9.8",
 			"baseURL": "https://asurascans.com"

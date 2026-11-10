@@ -1,16 +1,16 @@
 {
-  "sourceCommit": "956b94abd324fc8cc5faf1596ae32584517776be",
+  "sourceCommit": "db162b60c2d3db9693653847170b863a91614c01",
   "sdkRevision": "ae6485e3c14ecd1fd5497d170eae884c68d04a87",
   "packages": [
     {
       "id": "en.asurascans",
-      "version": 20,
-      "size": 109966,
-      "sha256": "d8a3714d0297327cab1b20b718ca27ce99d5df2bb34987816d39b5948a57da18",
-      "wasm_sha256": "c30f699190f764649d1da100d400dd7066288ac59c14ee482cd4ff1d352eaf32",
+      "version": 21,
+      "size": 110338,
+      "sha256": "597dc957a3439b2b02f522921987fdd967b0e624a8ecdcc4555476fd561cc581",
+      "wasm_sha256": "fc0101c2a92dd55ac1c5b34e8c7cd45fb7fbb1d80a6ef0e1b458f10a8347a78c",
       "crate": "asurascans",
-      "packageURL": "sources/en.asurascans-v20.aix",
-      "iconURL": "icons/en.asurascans-v20.png"
+      "packageURL": "sources/en.asurascans-v21.aix",
+      "iconURL": "icons/en.asurascans-v21.png"
     },
     {
       "id": "multi.hentaizap",
